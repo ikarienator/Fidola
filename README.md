@@ -1,6 +1,7 @@
 fast.js is a simple, tested, ready-to-used javascript algorithm library for any node.js and browser.
 
-# General Algorithms
+# Wish List
+## General Algorithms
 - Sequence Algorithms.
     - Longest Increasing Subsequence.
     - Longest Common Substring using DP(O(n^2)).
@@ -16,7 +17,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Worst case logarithmic k-th selection algorithm.
 - By-value Hashing for Objects.
 
-# General Data Structures
+## General Data Structures
 - Ordered Dictionary.
     - Unbalanced BST.
     - Red-Black Tree.
@@ -27,7 +28,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Cartesian Tree.
 - Tarjanic Disjoint Set.
 
-# Graph Theory
+## Graph Theory
     - Adjacency Matrix/Adjacency List
     - Traversal
     - Topological Sort
@@ -36,13 +37,13 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Shortest Paths
     - Maximum Flow
 
-# Numeric Algorithms
+## Numeric Algorithms
 - Numeric Derivative
 - Numeric Integral
 - Cubic Polynomial Solver
 - FFT
 
-# Simple Number Theory Algorithms
+## Simple Number Theory Algorithms
 - Primality Test
 - Small Number Factoring
 - Greatest Common Divisor / Extended GCD
