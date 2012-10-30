@@ -3,10 +3,9 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
 # Wish List
 ## General Algorithms
 - Sequence Algorithms.
-    - Longest Increasing Subsequence.
-    - Longest Common Substring using DP(O(n^2)).
-    - Longest Common Subsequence using DP(O(n^2)).
-    - Linked List(Singly and Doubly).
+    - Longest Increasing Subsequence. _Finished_
+    - Longest Common Substring using DP(O(n^2)). _Finished_
+    - Longest Common Subsequence using DP(O(n^2)). _Finished_
 - Sort and Select algorithms.
     - Compare based stable sort algorithm.
     - [In-place merge sort](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.22.5514&rep=rep1&type=pdf). 
@@ -14,20 +13,21 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Counting sort.
     - Bucket sort.
     - Quick partition and k-th selection.
-    - Worst case logarithmic k-th selection algorithm.
 - By-value Hashing for Objects.
 
 ## General Data Structures
+- Linked List(Singly and Doubly).
 - Ordered Dictionary.
     - Unbalanced BST.
     - Red-Black Tree.
     - AVL Tree.
     - Skip List.
-    - [Van Emde Boas Tree](http://en.wikipedia.org/wiki/Van_Emde_Boas_tree).
+    - Van Emde Boas Tree.
 - Heaps.
     - Binary Heap.
     - Cartesian Tree.
-- Tarjanic Disjoint Set.
+- Disjoint Set.
+- Young Tableau
 
 ## Graph Theory
 - Adjacency Matrix/Adjacency List
