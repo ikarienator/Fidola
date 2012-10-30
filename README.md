@@ -1,7 +1,8 @@
 fast.js is a simple, tested, ready-to-used javascript algorithm library for any node.js and browser.
 
-# Wish List
-## General Algorithms
+## Wish List
+
+### General Algorithms
 - Sequence Algorithms.
     - Longest Increasing Subsequence. _Finished_
     - Longest Common Substring using DP(O(n^2)). _Finished_
@@ -15,7 +16,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Quick partition and k-th selection.
 - By-value Hashing for Objects.
 
-## General Data Structures
+### General Data Structures
 - Linked List(Singly and Doubly).
 - Ordered Dictionary.
     - Unbalanced BST.
@@ -29,7 +30,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
 - Disjoint Set.
 - Young Tableau
 
-## Graph Theory
+### Graph Theory
 - Adjacency Matrix/Adjacency List
 - Traversal
 - Topological Sort
@@ -38,14 +39,14 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
 - Shortest Paths
 - Maximum Flow
 
-## Numeric Algorithms
+### Numeric Algorithms
 - Numeric Derivative
 - Numeric Integral
 - Cubic Polynomial Solver
 - FFT
 - Polynomial Evaluation
 
-## Simple Number Theory Algorithms
+### Simple Number Theory Algorithms
 - Primality Test
 - Small Number Factoring
 - Greatest Common Divisor / Extended GCD
@@ -54,12 +55,12 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
 - Pell's equation.
 - CRT Recovery.
 
-## Linear Algebra
+### Linear Algebra
 - Vectors and Matrix.
 - Eigenvalue and Eigenvectors.
 - Gaussian Elimination.
 
-## Computational Geometry
+### Computational Geometry
 - Intersection
 - Spline interpolation
 - Polygon
@@ -69,7 +70,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Offset
 - Voronoi Diagram / Delaunay Triangulation
 
-#License (BSD)
+## License (BSD)
 
 Copyright (C) 2012 [Bei ZHANG](http://twbs.in/).
 
