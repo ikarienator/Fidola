@@ -67,6 +67,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Intersect/Union
     - Hit test
     - Offset
+- Voronoi Diagram / Delaunay Triangulation
 
 #License
 
