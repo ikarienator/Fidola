@@ -8,7 +8,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Linked List(Singly and Doubly).
 - Sort and Select algorithms.
     - Compare based stable sort algorithm.
-    - In-place merge sort. (http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.22.5514&rep=rep1&type=pdf)
+    - [In-place merge sort](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.22.5514&rep=rep1&type=pdf). 
     - Radix sort.
     - Counting sort.
     - Bucket sort.
