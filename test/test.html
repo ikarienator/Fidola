@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>Unit Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="./3rd_party/mocha.css" />
+    <script src="./3rd_party/mocha.js"></script>
+    <script src="./3rd_party/expect.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="../src/fast.js"></script>
+    <script src="../src/LIS.js"></script>
+    <script src="../src/LCSStr.js"></script>
+    <script src="spec/Sequence.spec.js"></script>
+    <script>
+        function assert(expr, msg) {
+            if (!expr) throw new Error(msg || 'failed');
+        }
+    </script>
+    <script>
+        onload = function(){
+            var runner = mocha.run();
+            runner.globals(['foo', 'bar', 'baz']);
+        };
+    </script>
+</head>
+<body>
+<h1>Unit tests of fast.js</h1>
+<div id="mocha"></div>
+</body>
+</html>

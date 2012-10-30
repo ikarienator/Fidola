@@ -1,0 +1,12 @@
+{
+    "name": "fast.js",
+    "description": "Fast, Tested Algorithms in JavaScript",
+    "homepage": "",
+    "version": "0.0.1-dev",
+    "engines": {
+        "node": ">=0.4.0"
+    },
+    "scripts": {
+        "test": "mocha -R spec test/test.js"
+    }
+}
