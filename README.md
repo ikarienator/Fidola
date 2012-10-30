@@ -22,6 +22,7 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Unbalanced BST.
     - Red-Black Tree.
     - AVL Tree.
+    - Skip List.
     - [Van Emde Boas Tree](http://en.wikipedia.org/wiki/Van_Emde_Boas_tree).
 - Heaps.
     - Binary Heap.
@@ -29,19 +30,20 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
 - Tarjanic Disjoint Set.
 
 ## Graph Theory
-    - Adjacency Matrix/Adjacency List
-    - Traversal
-    - Topological Sort
-    - Strongly Connected Components
-    - Minimum Spanning Trees (Kruskal and Prim)
-    - Shortest Paths
-    - Maximum Flow
+- Adjacency Matrix/Adjacency List
+- Traversal
+- Topological Sort
+- Strongly Connected Components
+- Minimum Spanning Trees (Kruskal and Prim)
+- Shortest Paths
+- Maximum Flow
 
 ## Numeric Algorithms
 - Numeric Derivative
 - Numeric Integral
 - Cubic Polynomial Solver
 - FFT
+- Polynomial Evaluation
 
 ## Simple Number Theory Algorithms
 - Primality Test
@@ -50,6 +52,21 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
 - Big Integer Arithmetics.
 - Continued Fraction / Diophantine approximation
 - Pell's equation.
+- CRT Recovery.
+
+## Linear Algebra
+- Vectors and Matrix.
+- Eigenvalue and Eigenvectors.
+- Gaussian Elimination.
+
+## Computational Geometry
+- Intersection
+- Spline interpolation
+- Polygon
+    - Area/Circumference
+    - Intersect/Union
+    - Hit test
+    - Offset
 
 #License
 
