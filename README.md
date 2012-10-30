@@ -1,9 +1,10 @@
 fast.js is a simple, tested, ready-to-used javascript algorithm library for any node.js and browser.
 
-#Features
+# Algorithms
 - Sequence Algorithms.
-    - Longest Increasing Subsequence(LIS).
-    - Longest Common Substring (LCStr) using DP(O(n^2)).
+    - Longest Increasing Subsequence.
+    - Longest Common Substring using DP(O(n^2)).
+    - Longest Common Subsequence using DP(O(n^2)).
     - Linked List(Singly and Doubly).
 - Sort and Select algorithms.
     - Compare based stable sort algorithm.
@@ -11,12 +12,21 @@ fast.js is a simple, tested, ready-to-used javascript algorithm library for any 
     - Radix sort.
     - Counting sort.
     - Bucket sort.
-- Binary Search Tree.
+    - Quick partition and k-th selection.
+    - Worst case logarithmic k-th selection algorithm.
+- By-value Hashing for Objects.
+
+
+# Data Structures
+- Ordered Dictionary.
     - Unbalanced BST.
     - Red-Black Tree.
     - AVL Tree.
-- Heap (Priority Queue)
-    - Binary Heap
+    - Van Emde Boas Tree.
+
+- Heaps.
+    - Binary Heap.
+    - Cartesian Tree.
 
 #License
 
