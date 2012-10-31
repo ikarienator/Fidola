@@ -62,11 +62,6 @@
                                 trackBack: heads[k]
                             };
                         }
-                        if (heads[k + 1]) {
-                            j = heads[k + 1].indexA;
-                        } else {
-                            j = ln2;
-                        }
                     } else {
                         if (!target[l] || target[l].indexA > j) {
                             target[l] = {
@@ -76,11 +71,13 @@
                                 trackBack: null
                             };
                         }
-                        if (heads[k + 1]) {
-                            j = heads[k + 1].indexA;
-                        } else {
-                            j = ln2;
-                        }
+                    }
+                    // Jump to next change cause collision will not improve
+                    // the result
+                    if (heads[k + 1]) {
+                        j = heads[k + 1].indexA;
+                    } else {
+                        j = ln2;
                     }
                 }
                 // do nothing else wise.
