@@ -38,5 +38,5 @@
         return result;
     }
 
-    global.fast.seq.longestIncreasingSubsequence = longestIncreasingSubsequence;
+    global.fast.seq.LIS = longestIncreasingSubsequence;
 }(global));

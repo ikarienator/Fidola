@@ -1,7 +1,7 @@
 describe("Sequence Algorithm", function () {
     describe("Longest Increasing Subsequence", function () {
         var seed = 1.7;
-        var LIS = fast.seq.longestIncreasingSubsequence;
+        var LIS = fast.seq.LIS;
 
         function random() {
             seed *= 12422.4234;
@@ -51,14 +51,15 @@ describe("Sequence Algorithm", function () {
 
     describe("Longest Common SubString (DP)", function () {
         var seed = 1.7;
+
         function random() {
             seed *= 12422.4234;
             seed -= Math.floor(seed);
             return seed;
         }
-        
-        var lcs = fast.seq.longestCommonSubarrayDP,
-            lcsStr = fast.seq.longestCommonSubstringDP,
+
+        var lcs = fast.seq.LCStr,
+            lcsStr = fast.seq.LCStrStr,
             empty = { startA: 0, startB: 0, length: 0, result: [] };
         it("Empty Array", function () {
             expect(lcs([], [])).to.eql(empty);
@@ -91,12 +92,103 @@ describe("Sequence Algorithm", function () {
         it("Stress Test", function () {
             var num1 = [], num2 = [];
             seed = 1.7;
-            for (var i = 0; i < 2000; i++) {
+            for (var i = 0; i < 1000; i++) {
                 num1.push(Math.floor(random() * 3) % 3);
                 num2.push(Math.floor(random() * 3) % 3);
             }
             var result = lcs(num1, num2).result;
-            expect(result.length).to.eql(14);
+            expect(result.length).to.eql(12);
+        });
+    });
+
+    describe("Longest Common SubSequence (DP)", function () {
+        var seed = 1.7;
+
+        function random() {
+            seed *= 12422.4234;
+            seed -= Math.floor(seed);
+            return seed;
+        }
+
+        var lcs = fast.seq.LCS,
+            empty = { indicesA: [], indicesB: [], length: 0, result: [] };
+
+        it("Empty Array", function () {
+            expect(lcs([], [])).to.eql(empty);
+            expect(lcs([], [1, 2, 3])).to.eql(empty);
+            expect(lcs([1, 2, 3], [])).to.eql(empty);
+        });
+
+        it("Single Element Array", function () {
+            expect(lcs([1], [])).to.eql(empty);
+            expect(lcs([], [1])).to.eql(empty);
+            expect(lcs([1], [2])).to.eql(empty);
+            expect(lcs([1], [1])).to.eql({
+                indicesA: [ 0 ],
+                indicesB: [ 0 ],
+                length: 1,
+                result: [ 1 ]});
+        });
+
+        it("General Cases", function () {
+            expect(lcs([1, 2, 1, 1], [1, 1])).to.eql({ indicesA: [0, 2], indicesB: [0, 1], length: 2, result: [1, 1] });
+            expect(lcs([1, 2, 3, 4], [1, 3])).to.eql({ indicesA: [0, 2], indicesB: [0, 1], length: 2, result: [1, 3] });
+            expect(lcs([1, 2, 3, 4], [1, 3, 4])).to.eql({ indicesA: [0, 2, 3], indicesB: [0, 1, 2], length: 3, result: [1, 3, 4] });
+            expect(lcs([1, 2, 3, 4], [4, 3, 2, 1])).to.eql({ indicesA: [0], indicesB: [3], length: 1, result: [ 1 ] });
+            expect(lcs([1, 2, 3, 5], [4, 3, 4, 5, 1])).to.eql({ indicesA: [2, 3], indicesB: [1, 3], length: 2, result: [ 3, 5 ]});
+            expect(lcs([1, 1, 2, 3, 5, 8], [0, 1, 1, 2, 3, 5, 8])).to.eql({
+                indicesA: [0, 1, 2, 3, 4, 5],
+                indicesB: [1, 2, 3, 4, 5, 6],
+                length: 6,
+                result: [1, 1, 2, 3, 5, 8]
+            });
+            expect(lcs([1, 2, 1, 2, 3, 3, 3, 3, 1, 2], [1, 2, 1, 3, 4, 4, 4, 3, 2, 1, 2])).to.eql({
+                indicesA: [ 0, 1, 2, 4, 5, 8, 9 ],
+                indicesB: [ 0, 1, 2, 3, 7, 9, 10 ],
+                length: 7,
+                result: [ 1, 2, 1, 3, 3, 1, 2 ] });
+            expect(lcs("1234567".split(''), '6138472'.split('')).result).to.eql(['1', '3', '4', '7']);
+        });
+
+        it("Stress Test", function () {
+            var num1 = [], num2 = [];
+            seed = 1.7;
+            for (var i = 0; i < 3000; i++) {
+                num1.push(Math.floor(random() * 3) % 3);
+                num2.push(Math.floor(random() * 3) % 3);
+            }
+
+            var oracle = [], source = [];
+            for (var j = 0; j < num2.length; j++) {
+                if (num1[0] === num2[j]) {
+                    while (j < num1.length) {
+                        oracle[j++] = 1;
+                    }
+                } else {
+                    oracle[j] = 0;
+                }
+            }
+            
+            source = oracle.slice();
+            for (var i = 1; i < num1.length; i++) {
+                if (num1[i] === num2[0]) {
+                    oracle[0] = 1;
+                } else {
+                    oracle[0] = 0;
+                }
+                for (var j = 1; j < num2.length; j++) {
+                    if (num1[i] === num2[j]) {
+                        oracle[j] = source[j - 1] + 1;
+                    } else {
+                        oracle[j] = Math.max(source[j], oracle[j - 1]);
+                    }
+                }
+                source = oracle;
+                oracle = [];
+            }
+
+            var result = lcs(num1, num2).result;
+            expect(result.length).to.eql(source[source.length - 1]);
         });
     });
 });

@@ -6,7 +6,7 @@
      * @param {Function} [eqTest]
      * @return {Object}
      */
-    function longestCommonSubsequenceDP(a, b, eqTest) {
+    function longestCommonSubarrayDP(a, b, eqTest) {
         if (!eqTest) {
             eqTest = function (a, b) {
                 return a === b;
@@ -14,20 +14,20 @@
         }
         if (a.length > b.length) {
             // Swap a, b
-            var result = longestCommonSubsequenceDP(b, a, function (a, b) {
+            var result = longestCommonSubarrayDP(b, a, function (a, b) {
                 return eqTest(b, a);
             });
             return {
-                indicesA: result.indicesB,
-                indicesB: result.indicesA,
+                startA: result.startB,
+                startB: result.startA,
                 length: result.length,
                 result: result.result
             };
         }
         if (a.length === 0) {
             return {
-                indicesA: result.indicesB,
-                indicesB: result.indicesA,
+                startA: 0,
+                startB: 0,
                 length: 0,
                 result: []
             };
@@ -81,6 +81,18 @@
         };
     }
 
+    /**
+     *
+     * @param {String} a
+     * @param {String} b
+     * @return {String}
+     */
+    function longestCommonSubstringDP(a, b) {
+        return longestCommonSubarrayDP(a.split(''), b.split(''),function (a, b) {
+            return a === b;
+        }).result.join('');
+    }
 
-    global.fast.seq.longestCommonSubsequenceDP = longestCommonSubsequenceDP;
+    global.fast.seq.LCStr = longestCommonSubarrayDP;
+    global.fast.seq.LCStrStr = longestCommonSubstringDP;
 }(global));
