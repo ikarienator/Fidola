@@ -52,26 +52,16 @@
                         l += 1;
                     }
 
-                    if (heads[k]) {
-                        if (!target[l] || target[l].length < heads[k].length + 1 ||
-                            (target[l].length === heads[k].length + 1 && target[l].indexA > j)) {
-                            target[l] = {
-                                indexA: j,
-                                indexB: i,
-                                length: heads[k].length + 1,
-                                trackBack: heads[k]
-                            };
-                        }
-                    } else {
-                        if (!target[l] || target[l].indexA > j) {
-                            target[l] = {
-                                indexA: j,
-                                indexB: i,
-                                length: 1,
-                                trackBack: null
-                            };
-                        }
+
+                    if (!target[l] || target[l].indexA > j) {
+                        target[l] = {
+                            indexA: j,
+                            indexB: i,
+                            length: heads[k] ? heads[k].length + 1 : 1,
+                            trackBack: heads[k] || null
+                        };
                     }
+
                     // Jump to next change cause collision will not improve
                     // the result
                     if (heads[k + 1]) {

@@ -152,43 +152,12 @@ describe("Sequence Algorithm", function () {
 
         it("Stress Test", function () {
             var num1 = [], num2 = [];
-            seed = 1.7;
-            for (var i = 0; i < 3000; i++) {
-                num1.push(Math.floor(random() * 3) % 3);
-                num2.push(Math.floor(random() * 3) % 3);
+            for (var i = 0; i < 10000; i++) {
+                num1.push(i);
+                num2.push(i * 3);
             }
-
-            var oracle = [], source = [];
-            for (var j = 0; j < num2.length; j++) {
-                if (num1[0] === num2[j]) {
-                    while (j < num1.length) {
-                        oracle[j++] = 1;
-                    }
-                } else {
-                    oracle[j] = 0;
-                }
-            }
-            
-            source = oracle.slice();
-            for (var i = 1; i < num1.length; i++) {
-                if (num1[i] === num2[0]) {
-                    oracle[0] = 1;
-                } else {
-                    oracle[0] = 0;
-                }
-                for (var j = 1; j < num2.length; j++) {
-                    if (num1[i] === num2[j]) {
-                        oracle[j] = source[j - 1] + 1;
-                    } else {
-                        oracle[j] = Math.max(source[j], oracle[j - 1]);
-                    }
-                }
-                source = oracle;
-                oracle = [];
-            }
-
             var result = lcs(num1, num2).result;
-            expect(result.length).to.eql(source[source.length - 1]);
+            expect(result.length).to.eql(3334);
         });
     });
 });
