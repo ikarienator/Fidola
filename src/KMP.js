@@ -54,10 +54,14 @@
                 return a === b;
             };
         }
-        if (a.length < b.length || b.length === 0) {
+
+        var i = 0, j = 0, la = a.length, lb = b.length;
+        if (la < lb) {
             return -1;
         }
-        var i = 0, j = 0, la = a.length, lb = b.length;
+        if (lb === 0) {
+            return 0;
+        }
         if (la === lb) {
             for (i = 0; i < la; i += 1) {
                 if (!eqTest(a[i], b[i])) {

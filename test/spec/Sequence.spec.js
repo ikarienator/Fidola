@@ -154,15 +154,48 @@ describe("Sequence Algorithm", function () {
     });
 
     describe("KMP", function () {
+        var seed = 1.7;
+
+        function random() {
+            seed *= 12422.4234;
+            seed -= Math.floor(seed);
+            return seed;
+        }
+
         it("Preprocessing", function () {
+            expect(fast.seq.KMPPreProcess([])).to.eql([]);
             expect(fast.seq.KMPPreProcess([1])).to.eql([-1]);
-            expect(fast.seq.KMPPreProcess('GCAGAGAG'.split(''))).to.eql([-1, 0, 0, -1, 1, -1, 1, -1, 1]);
+            expect(fast.seq.KMPPreProcess('GCAGAGAG')).to.eql([-1, 0, 0, -1, 1, -1, 1, -1, 1]);
+        });
+        it("Empty", function () {
+            expect(fast.seq.KMP('', '')).to.equal(0);
+            expect(fast.seq.KMP('a', '')).to.equal(0);
+            expect(fast.seq.KMP('', 'a')).to.equal(-1);
+            expect(fast.seq.KMP('a', 'a')).to.equal(0);
+            expect(fast.seq.KMP('a', 'b')).to.equal(-1);
         });
         it("Matching", function () {
-            expect(fast.seq.KMP('ACDACG', 'ACG')).to.equal(3);
+            expect(fast.seq.KMP('ACDACG', 'ACG', function (a, b) {
+                return a === b;
+            })).to.equal(3);
             expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS')).to.equal(40);
             expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCSUCSUCS')).to.equal(-1);
             expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS-4UCS')).to.equal(-1);
+        });
+        it("Stress Test", function () {
+            var a = [],
+                b = [];
+            seed = 1.7;
+            for (var i = 0; i < 1000000; i++) {
+                a.push(Math.floor(random() * 1000) % 1000);
+            }
+            seed = 1.7;
+            for (var i = 0; i < 100000; i++) {
+                b.push(Math.floor(random() * 1000) % 1000);
+            }
+            expect(fast.seq.KMP(a, b)).to.equal(0);
+            b.push(0);
+            expect(fast.seq.KMP(a, b)).to.equal(-1);
         });
     });
 });
