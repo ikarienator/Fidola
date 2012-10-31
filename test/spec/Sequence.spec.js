@@ -152,4 +152,17 @@ describe("Sequence Algorithm", function () {
             expect(result.length).to.eql(1000);
         });
     });
+
+    describe("KMP", function () {
+        it("Preprocessing", function () {
+            expect(fast.seq.KMPPreProcess([1])).to.eql([-1]);
+            expect(fast.seq.KMPPreProcess('GCAGAGAG'.split(''))).to.eql([-1, 0, 0, -1, 1, -1, 1, -1, 1]);
+        });
+        it("Matching", function () {
+            expect(fast.seq.KMP('ACDACG', 'ACG')).to.equal(3);
+            expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS')).to.equal(40);
+            expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCSUCSUCS')).to.equal(-1);
+            expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS-4UCS')).to.equal(-1);
+        });
+    });
 });
