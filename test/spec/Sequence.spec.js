@@ -102,14 +102,6 @@ describe("Sequence Algorithm", function () {
     });
 
     describe("Longest Common SubSequence (DP)", function () {
-        var seed = 1.7;
-
-        function random() {
-            seed *= 12422.4234;
-            seed -= Math.floor(seed);
-            return seed;
-        }
-
         var lcs = fast.seq.LCS,
             empty = { indicesA: [], indicesB: [], length: 0, result: [] };
 
@@ -152,12 +144,12 @@ describe("Sequence Algorithm", function () {
 
         it("Stress Test", function () {
             var num1 = [], num2 = [];
-            for (var i = 0; i < 10000; i++) {
+            for (var i = 0; i < 3000; i++) {
                 num1.push(i);
                 num2.push(i * 3);
             }
             var result = lcs(num1, num2).result;
-            expect(result.length).to.eql(3334);
+            expect(result.length).to.eql(1000);
         });
     });
 });
