@@ -15,14 +15,21 @@ fast.js: Makefile \
 	src/datastructure/RedBlackTree.js \
 	src/end.js
 	@rm -f $@
-	cat $(filter %.js,$^) | $(JS_BEAUTIFIER) > $@
+	@echo Building fast.js ...
+	@cat $(filter %.js,$^) | $(JS_BEAUTIFIER) > $@
 
 fast.min.js: fast.js
 	@rm -f $@
-	$(JS_MINIFIER) fast.js > fast.min.js
+	@echo Building fast.min.js ...
+	@$(JS_MINIFIER) fast.js > fast.min.js
+
+.PHONY: test cover
 
 test: fast.js
-	npm test
+	@npm test
 
 cover: fast.js
-	npm run-script coverage
+	@npm run-script coverage
+
+clean:
+	@rm -f fast.js fast.min.js

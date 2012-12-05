@@ -196,9 +196,9 @@ describe("Data Structure", function () {
                 rbTree.insert(data[i]);
                 index[i] = i;
             }
-            
+
             fast.seq.shuffle(index);
-            
+
             for (i = 0; i < data.length / 2; i++) {
                 rbTree.remove(data[index[i]]);
             }
@@ -250,10 +250,22 @@ describe("Data Structure", function () {
             for (var i = 1; i < arr.length; i++) {
                 expect(arr[(i - 1) >> 1]).not.to.greaterThan(arr[i]);
             }
+
+
         });
 
         it("push", function () {
-            var pq = new fast.ds.PriorityQueue(data);
+            var pq = new fast.ds.PriorityQueue();
+            var arr = pq._arr, i;
+            for (i = 0; i < data.length; i++) {
+                pq.push(data[i]);
+            }
+            expect(pq.size()).to.eql(data.length);
+            expect(arr.length).to.eql(data.length)
+            for (i = 1; i < arr.length; i++) {
+                expect(arr[(i - 1) >> 1]).not.to.greaterThan(arr[i]);
+            }
+
             pq.push(3);
             expect(pq.size()).to.eql(data.length + 1);
             pq.push(3);
