@@ -114,7 +114,7 @@ PriorityQueue.prototype = {
     remove: function (data) {
         var arr = this._arr,
             i = -1, ln = arr.length - 1;
-        if (ln === 0) {
+        if (ln === -1) {
             return false;
         } else if (arr[ln] === data) {
             arr.length--;

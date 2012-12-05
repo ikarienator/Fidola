@@ -4,7 +4,7 @@ JS_BEAUTIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs -b -i 2 -nm -ns
 
 all: fast.js fast.min.js
 
-fast.js: Makefile \
+fast.js: \
 	src/start.js \
 	src/sequence/KMP.js \
 	src/sequence/LCS.js \
@@ -30,6 +30,7 @@ test: fast.js
 
 cover: fast.js
 	@npm run-script coverage
+	@echo "\n\nOpen <fast-root>/coverage/lcov-report/index.html"
 
 clean:
 	@rm -f fast.js fast.min.js

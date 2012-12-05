@@ -9,7 +9,7 @@ describe("Data Structure", function () {
             return seed;
         }
 
-        for (var i = 0; i < 33; i++) {
+        for (var i = 0; i < 400; i++) {
             data.push(random());
         }
         var sorted = data.slice(0).sort(function (a, b) {
@@ -94,7 +94,9 @@ describe("Data Structure", function () {
             var rbTree = new fast.ds.RedBlackTree(), node;
             for (var i = 0; i < data.length; i++) {
                 node = rbTree.insert(data[i]);
-                expect(node.data).to.be(data[i]);
+                if (i < 30) {
+                    expect(node.data).to.be(data[i]);
+                }
             }
             checkTopo(rbTree.root);
             checkBlackCount(rbTree);
@@ -272,6 +274,24 @@ describe("Data Structure", function () {
             expect(pq.size()).to.eql(data.length + 2);
             pq.push(3, 3, 3);
             expect(pq.size()).to.eql(data.length + 5);
+        });
+
+        it("remove", function () {
+            var pq = new fast.ds.PriorityQueue(data),
+                arr = pq._arr, i, j;
+            for (i = 0; i < data.length / 2; i++) {
+                expect(pq.remove(data[i])).to.be(true);
+            }
+            for (j = 1; j < arr.length; j++) {
+                expect(arr[(j - 1) >> 1]).not.to.greaterThan(arr[j]);
+            }
+            for (; i < data.length; i++) {
+                if (i == 13) {
+                    debugger
+                }
+                expect(pq.remove(data[i])).to.be(true);
+            }
+            expect(pq.remove(data[0])).to.be(false);
         });
 
         it("pop", function () {
