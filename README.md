@@ -23,6 +23,7 @@ A simple, tested, ready-to-used javascript algorithm library for node.js and bro
 - Ordered Dictionaries
     - Unbalanced BST
     - Red-Black Tree
+    - Splay Tree
     - AVL Tree
     - Skip List
     - Van Emde Boas Tree

@@ -184,16 +184,21 @@ describe("Sequence Algorithm", function () {
         });
         it("Stress Test", function () {
             var a = [],
-                b = [];
+                b = [],
+                savedSeed;
             seed = 1.7;
+            for (var i = 0; i < 1000; i++) {
+                a.push(Math.floor(random() * 1000) % 1000);
+            }
+            savedSeed = seed;
             for (var i = 0; i < 1000000; i++) {
                 a.push(Math.floor(random() * 1000) % 1000);
             }
-            seed = 1.7;
-            for (var i = 0; i < 100000; i++) {
+            seed = savedSeed;
+            for (var i = 0; i < 10000; i++) {
                 b.push(Math.floor(random() * 1000) % 1000);
             }
-            expect(fast.seq.KMP(a, b)).to.equal(0);
+            expect(fast.seq.KMP(a, b)).to.equal(1000);
             b.push(0);
             expect(fast.seq.KMP(a, b)).to.equal(-1);
         });
