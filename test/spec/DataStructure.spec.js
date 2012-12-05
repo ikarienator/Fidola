@@ -282,13 +282,11 @@ describe("Data Structure", function () {
             for (i = 0; i < data.length / 2; i++) {
                 expect(pq.remove(data[i])).to.be(true);
             }
+            expect(pq.remove(data[0])).to.be(false);
             for (j = 1; j < arr.length; j++) {
                 expect(arr[(j - 1) >> 1]).not.to.greaterThan(arr[j]);
             }
             for (; i < data.length; i++) {
-                if (i == 13) {
-                    debugger
-                }
                 expect(pq.remove(data[i])).to.be(true);
             }
             expect(pq.remove(data[0])).to.be(false);
