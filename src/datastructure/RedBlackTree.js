@@ -25,7 +25,7 @@ RedBlackTree.prototype = {
 
     length: 0,
 
-    onBeforeNodeChange: function (newNode, oldNode) {
+    beforeNodeSwap: function (newNode, oldNode) {
     },
 
     /**
@@ -138,7 +138,7 @@ RedBlackTree.prototype = {
 
     swap: function (node1, node2) {
         var data1 = node1.data, data2 = node2.data;
-        this.onBeforeNodeChange(node1, node2);
+        this.beforeNodeSwap(node1, node2);
         node1.data = data2;
         node2.data = data1;
     },
