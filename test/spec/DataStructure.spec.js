@@ -122,6 +122,16 @@ describe("Data Structure", function () {
 
         it("iterate", function () {
             var rbTree = new fast.ds.RedBlackTree(), i, curr;
+
+            i = 0;
+            rbTree.iterate(function (item, node) {
+                if (i < data.length) {
+                    expect(node.data).eql(sorted[i]);
+                }
+                i++;
+            });
+            expect(i).to.be(0);
+            
             rbTree.insert(data[0]);
             expect(rbTree.first().data).eql(data[0]);
             expect(rbTree.prev(rbTree.first())).to.be(null);
@@ -194,6 +204,7 @@ describe("Data Structure", function () {
         it("remove", function () {
             var rbTree = new fast.ds.RedBlackTree(),
                 index = [];
+            rbTree.remove(data[0]);
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
                 index[i] = i;

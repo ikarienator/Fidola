@@ -25,10 +25,10 @@ fast.min.js: fast.js
 
 .PHONY: test cover
 
-test: fast.js
+test: all
 	@npm test
 
-cover: fast.js
+cover: all
 	@npm run-script coverage
 	@echo "\n\nOpen <fast-root>/coverage/lcov-report/index.html"
 
