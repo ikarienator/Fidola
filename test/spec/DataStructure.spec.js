@@ -249,14 +249,14 @@ describe("Data Structure", function () {
         });
     });
 
-    describe("PriorityQueue", function () {
+    describe("BinaryHeap", function () {
         var data = [1, 3, 3, 4, 4, 2, 4, 5, 6, 7, 11, 25, 23, -3],
             sorted = data.slice(0).sort(function (a, b) {
                 return a - b;
             });
 
         it("initialize", function () {
-            var pq = new fast.ds.PriorityQueue(data);
+            var pq = new fast.ds.BinaryHeap(data);
             var arr = pq._arr;
             expect(pq.size()).to.eql(data.length);
             expect(arr.length).to.eql(data.length);
@@ -268,7 +268,7 @@ describe("Data Structure", function () {
         });
 
         it("push", function () {
-            var pq = new fast.ds.PriorityQueue();
+            var pq = new fast.ds.BinaryHeap();
             var arr = pq._arr, i;
             for (i = 0; i < data.length; i++) {
                 pq.push(data[i]);
@@ -288,7 +288,7 @@ describe("Data Structure", function () {
         });
 
         it("remove", function () {
-            var pq = new fast.ds.PriorityQueue(data),
+            var pq = new fast.ds.BinaryHeap(data),
                 arr = pq._arr, i, j;
             for (i = 0; i < data.length / 2; i++) {
                 expect(pq.remove(data[i])).to.be(true);
@@ -304,7 +304,7 @@ describe("Data Structure", function () {
         });
 
         it("pop", function () {
-            var pq = new fast.ds.PriorityQueue(data);
+            var pq = new fast.ds.BinaryHeap(data);
             for (var i = 0; pq.size(); i++) {
                 expect(pq.size()).to.eql(data.length - i);
                 expect(pq.pop()).to.eql(sorted[i]);
@@ -315,7 +315,7 @@ describe("Data Structure", function () {
         });
 
         it("peek", function () {
-            var pq = new fast.ds.PriorityQueue(data);
+            var pq = new fast.ds.BinaryHeap(data);
             pq.push(3);
             pq.push(5);
             for (var i = 0; pq.size(); i++) {

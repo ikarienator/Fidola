@@ -4,19 +4,19 @@ JS_BEAUTIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs -b -i 2 -nm -ns
 
 all: fast.js fast.min.js
 
-fast.js: \
-	src/start.js \
-	src/sequence/KMP.js \
-	src/sequence/LCS.js \
-	src/sequence/LCStr.js \
-	src/sequence/LIS.js \
-	src/sequence/Shuffle.js \
-	src/datastructure/PriorityQueue.js \
-	src/datastructure/RedBlackTree.js \
-	src/end.js
+fast.js: Makefile\
+	lib/sequence/KMP.js \
+	lib/sequence/LCS.js \
+	lib/sequence/LCStr.js \
+	lib/sequence/LIS.js \
+	lib/sequence/Shuffle.js \
+	lib/datastructure/BinaryHeap.js \
+	lib/datastructure/RedBlackTree.js \
+	lib/browser.js \
+	lib/fast.js
 	@rm -f $@
 	@echo Building fast.js ...
-	@cat $(filter %.js,$^) | $(JS_BEAUTIFIER) > $@
+	browserify lib/browser.js --exports require -o fast.js
 
 fast.min.js: fast.js
 	@rm -f $@
