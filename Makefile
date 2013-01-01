@@ -12,11 +12,13 @@ fast.js: Makefile\
 	lib/sequence/Shuffle.js \
 	lib/datastructure/BinaryHeap.js \
 	lib/datastructure/RedBlackTree.js \
+	lib/dsp/FFT.js \
+	lib/mp/BigInteger.js \
 	lib/browser.js \
 	lib/fast.js
 	@rm -f $@
 	@echo Building fast.js ...
-	browserify lib/browser.js --exports require -o fast.js
+	browserify lib/browser.js -o fast.js
 
 fast.min.js: fast.js
 	@rm -f $@
