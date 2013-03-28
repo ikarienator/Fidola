@@ -769,329 +769,269 @@ function shuffle(array, rng) {
 exports.shuffle = shuffle;
 });
 
-require.define("/datastructure/BinaryHeap.js",function(require,module,exports,__dirname,__filename,process,global){function BinaryHeap(values, orderTest) {
-    if (orderTest === undefined) {
-        orderTest = function (a, b) {
+require.define("/datastructure/BinaryHeap.js",function(require,module,exports,__dirname,__filename,process,global){var BinaryHeap = (function () {
+    function BinaryHeap(values, orderTest) {
+        if (typeof orderTest === "undefined") { orderTest = function (a, b) {
             return a < b;
-        }
-    }
-    this._lessTest = orderTest;
-
-    if (values !== undefined) {
-        this._arr = values.slice(0);
-        var arr = this._arr, i, ln = arr.length, parent;
-        for (i = ln - 1; i >= 0; i--) {
-            this._down(i);
-        }
-    } else {
-        this._arr = [];
-    }
-}
-
-var binaryHeap_prototype = BinaryHeap.prototype;
-binaryHeap_prototype._up = function (k) {
-    var arr = this._arr,
-        value = arr[k],
-        orderTest = this._lessTest,
-        parent;
-    do {
-        parent = (k - 1) >> 1;
-        if (orderTest(value, arr[parent])) {
-            arr[k] = arr[parent];
-            k = parent;
-        } else {
-            break;
-        }
-    } while (k > 0);
-    arr[k] = value;
-};
-
-/**
- *
- * @param {Number} k
- * @private
- */
-binaryHeap_prototype._down = function (k) {
-    var arr = this._arr,
-        orderTest = this._lessTest,
-        value = arr[k],
-        left, right,
-        ln = arr.length;
-    do {
-        left = k * 2 + 1;
-        right = k * 2 + 2;
-        if (right >= ln) {
-            // No right child
-            if (left < ln) {
-                if (orderTest(arr[left], value)) {
-                    arr[k] = arr[left];
-                    k = left;
-                }
+        }; }
+        this.orderTest = orderTest;
+        if(values !== undefined) {
+            this._arr = values.slice(0);
+            var arr = this._arr, i, ln = arr.length;
+            for(i = ln - 1; i >= 0; i--) {
+                this.down(i);
             }
-            break;
         } else {
-            if (orderTest(arr[left], arr[right])) {
-                if (orderTest(arr[left], value)) {
-                    arr[k] = arr[left];
-                    k = left;
-                } else {
-                    // k is in the right place
-                    break;
-                }
-            } else if (orderTest(arr[right], value)) {
-                arr[k] = arr[right];
-                k = right;
+            this._arr = [];
+        }
+    }
+    BinaryHeap.prototype.up = function (k) {
+        var arr = this._arr, value = arr[k], orderTest = this.orderTest, parent;
+        do {
+            parent = (k - 1) >> 1;
+            if(orderTest(value, arr[parent])) {
+                arr[k] = arr[parent];
+                k = parent;
             } else {
-                // k is in the right place
                 break;
             }
+        }while(k > 0);
+        arr[k] = value;
+    };
+    BinaryHeap.prototype.down = function (k) {
+        var arr = this._arr, orderTest = this.orderTest, value = arr[k], left, right, ln = arr.length;
+        do {
+            left = k * 2 + 1;
+            right = k * 2 + 2;
+            if(right >= ln) {
+                if(left < ln) {
+                    if(orderTest(arr[left], value)) {
+                        arr[k] = arr[left];
+                        k = left;
+                    }
+                }
+                break;
+            } else {
+                if(orderTest(arr[left], arr[right])) {
+                    if(orderTest(arr[left], value)) {
+                        arr[k] = arr[left];
+                        k = left;
+                    } else {
+                        break;
+                    }
+                } else if(orderTest(arr[right], value)) {
+                    arr[k] = arr[right];
+                    k = right;
+                } else {
+                    break;
+                }
+            }
+        }while(true);
+        arr[k] = value;
+    };
+    BinaryHeap.prototype.push = function (el) {
+        var arr = this._arr;
+        if(arguments.length > 1) {
+            for(var i = 0; i < arguments.length; i++) {
+                arr.push(arguments[i]);
+                this.up(arr.length - 1);
+            }
+        } else if(arr.length === 0) {
+            arr.push(el);
+        } else {
+            arr.push(el);
+            this.up(arr.length - 1);
         }
-    } while (true);
-    arr[k] = value;
-};
-
-binaryHeap_prototype.push = function (el) {
-    var arr = this._arr;
-    if (arguments.length > 1) {
-        for (var i = 0; i < arguments.length; i++) {
-            arr.push(arguments[i]);
-            this._up(arr.length - 1);
+    };
+    BinaryHeap.prototype.peek = function () {
+        return this._arr[0];
+    };
+    BinaryHeap.prototype.pop = function () {
+        var arr = this._arr, value = arr[0];
+        if(arr.length > 1) {
+            arr[0] = arr[arr.length - 1];
+            arr.length--;
+            this.down(0);
+        } else {
+            arr.length = 0;
         }
-    } else if (arr.length === 0) {
-        arr.push(el);
-    } else {
-        arr.push(el);
-        this._up(arr.length - 1);
-    }
-};
-
-binaryHeap_prototype.peek = function () {
-    return this._arr[0];
-};
-
-binaryHeap_prototype.pop = function () {
-    var arr = this._arr,
-        value = arr[0];
-    if (arr.length > 1) {
-        arr[0] = arr[arr.length - 1];
-        arr.length--;
-        this._down(0);
-    } else {
-        arr.length = 0;
-    }
-    return value;
-};
-
-binaryHeap_prototype.remove = function (data) {
-    var arr = this._arr,
-        i = -1, ln = arr.length - 1;
-    if (ln === -1) {
-        return false;
-    } else if (arr[ln] === data) {
-        arr.length--;
-        return true;
-    } else {
-        while (i++ < ln) {
-            if (arr[i] === data) {
-                arr[i] = arr[ln];
-                arr.length--;
-                this._down(i);
-                return true;
+        return value;
+    };
+    BinaryHeap.prototype.remove = function (data) {
+        var arr = this._arr, i = -1, ln = arr.length - 1;
+        if(ln === -1) {
+            return false;
+        } else if(arr[ln] === data) {
+            arr.length--;
+            return true;
+        } else {
+            while(i++ < ln) {
+                if(arr[i] === data) {
+                    arr[i] = arr[ln];
+                    arr.length--;
+                    this.down(i);
+                    return true;
+                }
             }
         }
-    }
-    return false;
-};
-
-binaryHeap_prototype.size = function () {
-    return this._arr.length;
-};
-
+        return false;
+    };
+    BinaryHeap.prototype.size = function () {
+        return this._arr.length;
+    };
+    return BinaryHeap;
+})();
 exports.BinaryHeap = BinaryHeap;
+
 });
 
-require.define("/datastructure/RedBlackTree.js",function(require,module,exports,__dirname,__filename,process,global){function RedBlackTree(lessTest) {
-    if (lessTest) {
-        this.lessTest = lessTest;
-    }
-}
-
-function RedBlackTreeNode(data) {
-    this.data = data;
-}
-
-RedBlackTreeNode.prototype = {
-    parent: null,
-    red: true,
-    left: null,
-    right: null,
-    data: null
+require.define("/datastructure/RedBlackTree.js",function(require,module,exports,__dirname,__filename,process,global){var __extends = this.__extends || function (d, b) {
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
 };
-
-RedBlackTree.prototype = {
-    lessTest: function (a, b) {
-        return a < b;
-    },
-
-    root: null,
-
-    length: 0,
-
-    beforeNodeSwap: function (newNode, oldNode) {
-    },
-
-    /**
-     *
-     * @param {*} data
-     * @return {RedBlackTreeNode} node
-     */
-    search: function (data) {
-        return this._nodeSearch(this.root, data);
-    },
-
-    searchMaxSmallerThan: function (data) {
-        return this._nodeSearchMaxSmallerThan(this.root, data);
-    },
-
-    searchMinGreaterThan: function (data) {
-        return this._nodeSearchMinGreaterThan(this.root, data);
-    },
-
-    /**
-     *
-     * @param data
-     */
-    insert: function (data) {
-        if (this.length === 0) {
-            this.length++;
-            this.root = new RedBlackTreeNode(data);
+var RedBlackTreeNode = (function () {
+    function RedBlackTreeNode(data) {
+        this.data = data;
+        this.red = true;
+        this.parent = null;
+        this.left = null;
+        this.right = null;
+    }
+    return RedBlackTreeNode;
+})();
+exports.RedBlackTreeNode = RedBlackTreeNode;
+var RedBlackTree = (function () {
+    function RedBlackTree() {
+        this.root = null;
+        this.length = 0;
+        this.beforeNodeSwap = function (a, b) {
+            return undefined;
+        };
+    }
+    RedBlackTree.prototype.first = function () {
+        return this.nodeLeftMost(this.root);
+    };
+    RedBlackTree.prototype.last = function () {
+        return this.nodeRightMost(this.root);
+    };
+    RedBlackTree.prototype.insertBefore = function (node, refNode) {
+        if(this.length == 0) {
+            this.length = 1;
+            this.root = node;
             this.root.red = false;
-            return this.root;
-        } else {
+            return node;
+        } else if(!refNode) {
+            return this.insertAfter(node, this.nodeRightMost(this.root));
+        } else if(!refNode.left) {
             this.length++;
-            return this._nodeInsert(this.root, data, this.lessTest);
+            refNode.left = node;
+            refNode.left.parent = refNode;
+            this.nodeInsertFixUp(refNode.left);
+            return node;
+        } else {
+            return this.insertAfter(node, this.nodeRightMost(node.left));
         }
-
-    },
-
-    first: function () {
-        return this._nodeLeftMost(this.root);
-    },
-
-    last: function () {
-        return this._nodeRightMost(this.root);
-    },
-
-
-    next: function (node) {
-        if (node.right) {
-            return this._nodeLeftMost(node.right);
-        } else if (node.parent) {
+    };
+    RedBlackTree.prototype.insertAfter = function (node, refNode) {
+        if(this.length == 0) {
+            this.length = 1;
+            this.root = node;
+            this.root.red = false;
+        } else if(!refNode) {
+            return this.insertBefore(node, this.nodeLeftMost(this.root));
+        } else if(!refNode.right) {
+            this.length++;
+            refNode.right = node;
+            refNode.right.parent = refNode;
+            this.nodeInsertFixUp(refNode.right);
+            return node;
+        } else {
+            return this.insertBefore(node, this.nodeLeftMost(node.right));
+        }
+    };
+    RedBlackTree.prototype.next = function (node) {
+        if(node.right) {
+            return this.nodeLeftMost(node.right);
+        } else if(node.parent) {
             var curr = node;
-            while (curr.parent && curr.parent.left !== curr) {
+            while(curr.parent && curr.parent.left !== curr) {
                 curr = curr.parent;
             }
             return curr.parent;
         } else {
-            // Root is right most
             return null;
         }
-    },
-
-    prev: function (node) {
-        if (node.left) {
-            return this._nodeRightMost(node.left);
-        } else if (node.parent) {
+    };
+    RedBlackTree.prototype.prev = function (node) {
+        if(node.left) {
+            return this.nodeRightMost(node.left);
+        } else if(node.parent) {
             var curr = node;
-            while (curr.parent && curr.parent.right !== curr) {
+            while(curr.parent && curr.parent.right !== curr) {
                 curr = curr.parent;
             }
             return curr.parent;
         } else {
-            // Root is left most
             return null;
         }
-    },
-
-    /**
-     *
-     * @param {Function} fn Function accepts node.data and node.
-     * @param {*} [arg] Overrides this
-     */
-    iterate: function (fn, arg) {
-        if (this.root) {
-            this._nodeIterate(this.root, fn, arg);
+    };
+    RedBlackTree.prototype.iterate = function (fn, thisObject) {
+        if(this.root) {
+            this.nodeIterate(this.root, fn, thisObject);
         }
-    },
-
-    /**
-     *
-     * @param data
-     */
-    remove: function (data) {
-        if (this.length) {
-            this.removeNode(this.search(data));
-        }
-    },
-
-    removeNode: function (node) {
+    };
+    RedBlackTree.prototype.removeNode = function (node) {
         var minNode;
-        if (node) {
-            if (node.right) {
-                minNode = this._nodeLeftMost(node.right);
+        if(node) {
+            if(node.right) {
+                minNode = this.nodeLeftMost(node.right);
                 this.swap(node, minNode);
-                this._nodeRemoveMin(minNode);
+                this.nodeRemoveMin(minNode);
             } else {
-                this._nodeRemoveMin(node);
+                this.nodeRemoveMin(node);
             }
             this.length--;
         }
-    },
-
-    swap: function (node1, node2) {
+    };
+    RedBlackTree.prototype.swap = function (node1, node2) {
         var data1 = node1.data, data2 = node2.data;
         this.beforeNodeSwap(node1, node2);
         node1.data = data2;
         node2.data = data1;
-    },
-
-    _nodeLeftMost: function (node) {
-        while (node && node.left) {
+    };
+    RedBlackTree.prototype.nodeLeftMost = function (node) {
+        while(node && node.left) {
             node = node.left;
         }
         return node;
-    },
-
-    _nodeRightMost: function (node) {
-        while (node && node.right) {
+    };
+    RedBlackTree.prototype.nodeRightMost = function (node) {
+        while(node && node.right) {
             node = node.right;
         }
         return node;
-    },
-
-    _nodeIsRed: function (node) {
+    };
+    RedBlackTree.prototype.nodeIsRed = function (node) {
         return node && node.red;
-    },
-
-    _nodeSibling: function (node) {
-        if (node && node.parent) {
+    };
+    RedBlackTree.prototype.nodeSibling = function (node) {
+        if(node && node.parent) {
             return node == node.parent.left ? node.parent.right : node.parent.left;
         } else {
             return null;
         }
-    },
-
-    _nodeColorFlip: function (node) {
+    };
+    RedBlackTree.prototype.nodeColorFlip = function (node) {
         node.red = !node.red;
         node.left.red = !node.left.red;
         node.right.red = !node.right.red;
-    },
-
-    _nodeRotateLeft: function (node) {
+    };
+    RedBlackTree.prototype.nodeRotateLeft = function (node) {
         var target = node.right;
         target.parent = node.parent;
-        if (node.parent) {
-            if (node.parent.left == node) {
+        if(node.parent) {
+            if(node.parent.left == node) {
                 node.parent.left = target;
             } else {
                 node.parent.right = target;
@@ -1100,18 +1040,17 @@ RedBlackTree.prototype = {
             this.root = target;
         }
         node.right = target.left;
-        if (node.right) {
+        if(node.right) {
             node.right.parent = node;
         }
         target.left = node;
         node.parent = target;
-    },
-
-    _nodeRotateRight: function (node) {
+    };
+    RedBlackTree.prototype.nodeRotateRight = function (node) {
         var target = node.left;
         target.parent = node.parent;
-        if (node.parent) {
-            if (node.parent.right === node) {
+        if(node.parent) {
+            if(node.parent.right === node) {
                 node.parent.right = target;
             } else {
                 node.parent.left = target;
@@ -1120,84 +1059,35 @@ RedBlackTree.prototype = {
             this.root = target;
         }
         node.left = target.right;
-        if (node.left) {
+        if(node.left) {
             node.left.parent = node;
         }
         target.right = node;
         node.parent = target;
-    },
-
-    _nodeSearch: function (node, data) {
-        var test = this.lessTest;
-        while (node && node.data !== data) {
-            if (test(data, node.data)) {
-                node = node.left;
-            } else {
-                node = node.right;
-            }
-        }
-        return node;
-    },
-
-    _nodeSearchMaxSmallerThan: function (node, data) {
-        var test = this.lessTest,
-            last = null;
-        while (node) {
-            if (test(node.data, data)) {
-                last = node;
-                node = node.right;
-            } else {
-                node = node.left;
-            }
-        }
-        return last;
-    },
-
-    _nodeSearchMinGreaterThan: function (node, data) {
-        var test = this.lessTest,
-            last = null;
-        while (node) {
-            if (test(data, node.data)) {
-                last = node;
-                node = node.left;
-            } else {
-                node = node.right;
-            }
-        }
-        return last;
-    },
-
-    _nodeInsertFixUp: function (node) {
-        // Case 1
-        // assert node.red
-        if (!node.parent) {
+    };
+    RedBlackTree.prototype.nodeInsertFixUp = function (node) {
+        if(!node.parent) {
             node.red = false;
-        } else if (node.parent.red) {
-            // Case 2
-            // Always has a grand parent
-            var p = node.parent,
-                g = p.parent,
-                u = g.left === p ? g.right : g.left;
-            if (this._nodeIsRed(u)) {
-                // Case 3
-                this._nodeColorFlip(g);
-                this._nodeInsertFixUp(g);
+        } else if(node.parent.red) {
+            var p = node.parent, g = p.parent, u = g.left === p ? g.right : g.left;
+            if(this.nodeIsRed(u)) {
+                this.nodeColorFlip(g);
+                this.nodeInsertFixUp(g);
             } else {
-                // Case 4
-                if (node === p.right && p === g.left) {
+                if(node === p.right && p === g.left) {
                     g.left = node;
                     node.parent = g;
-                    if ((p.right = node.left)) {
+                    if((p.right = node.left)) {
                         p.right.parent = p;
                     }
                     node.left = p;
                     p.parent = node;
                     p = node;
                     node = node.left;
-                } else if (node === p.left && p === g.right) {
+                } else if(node === p.left && p === g.right) {
                     g.right = node;
                     node.parent = g;
-                    if ((p.left = node.right)) {
+                    if((p.left = node.right)) {
                         p.left.parent = p;
                     }
                     node.right = p;
@@ -1205,121 +1095,77 @@ RedBlackTree.prototype = {
                     p = node;
                     node = node.right;
                 }
-                // Case 5
                 p.red = false;
                 g.red = true;
-                if (node == p.left) {
-                    this._nodeRotateRight(g);
+                if(node == p.left) {
+                    this.nodeRotateRight(g);
                 } else {
-                    this._nodeRotateLeft(g);
+                    this.nodeRotateLeft(g);
                 }
             }
         }
         return node;
-    },
-
-    _nodeInsert: function (node, data, lessTest) {
-        var result;
-        // assert node !== null
-        if (lessTest(data, node.data)) {
-            if (!node.left) {
-                result = node.left = new RedBlackTreeNode(data);
-                node.left.parent = node;
-                this._nodeInsertFixUp(node.left);
-                return result;
-            } else {
-                return this._nodeInsert(node.left, data, lessTest);
-            }
-        } else {
-            if (!node.right) {
-                result = node.right = new RedBlackTreeNode(data);
-                node.right.parent = node;
-                this._nodeInsertFixUp(node.right);
-                return result;
-            } else {
-                return this._nodeInsert(node.right, data, lessTest);
-            }
-        }
-    },
-
-    _nodeRemoveFixUp: function (node, parent, sibling) {
-        if (parent !== null) {
-            // Case 2
-            // sibling's black rank is 1 more than node's.
-            // Always have a parent
-            // Always have a sibling
-            // Not always have the node.
-            if (this._nodeIsRed(sibling)) {
+    };
+    RedBlackTree.prototype.nodeRemoveFixUp = function (node, parent, sibling) {
+        if(parent !== null) {
+            if(this.nodeIsRed(sibling)) {
                 parent.red = true;
                 sibling.red = false;
-                if (node === parent.left) {
-                    this._nodeRotateLeft(parent);
+                if(node === parent.left) {
+                    this.nodeRotateLeft(parent);
                     sibling = parent.right;
                 } else {
-                    this._nodeRotateRight(parent);
+                    this.nodeRotateRight(parent);
                     sibling = parent.left;
                 }
             }
-
-            // Now sibling is black
-            if (!this._nodeIsRed(sibling.left) && !this._nodeIsRed(sibling.right)) {
+            if(!this.nodeIsRed(sibling.left) && !this.nodeIsRed(sibling.right)) {
                 sibling.red = true;
-                if (!this._nodeIsRed(parent)) {
-                    // Case 3
-                    this._nodeRemoveFixUp(parent, parent.parent, this._nodeSibling(parent));
+                if(!this.nodeIsRed(parent)) {
+                    this.nodeRemoveFixUp(parent, parent.parent, this.nodeSibling(parent));
                 } else {
-                    // Case 4
                     parent.red = false;
                 }
             } else {
-                // Case 5
-                if (node === parent.left && !this._nodeIsRed(sibling.right) && this._nodeIsRed(sibling.left)) {
+                if(node === parent.left && !this.nodeIsRed(sibling.right) && this.nodeIsRed(sibling.left)) {
                     sibling.red = true;
                     sibling.left.red = false;
-                    this._nodeRotateRight(sibling);
+                    this.nodeRotateRight(sibling);
                     sibling = sibling.parent;
-                } else if (node === parent.right && !this._nodeIsRed(sibling.left) && this._nodeIsRed(sibling.right)) {
+                } else if(node === parent.right && !this.nodeIsRed(sibling.left) && this.nodeIsRed(sibling.right)) {
                     sibling.red = true;
                     sibling.right.red = false;
-                    this._nodeRotateLeft(sibling);
+                    this.nodeRotateLeft(sibling);
                     sibling = sibling.parent;
                 }
-
-                // Case 6
-                // Now sibling's far child is red.
-                // node, sibling, sibling's near child are black.
                 sibling.red = parent.red;
                 parent.red = false;
-                if (node === parent.left) {
-                    this._nodeRotateLeft(parent);
+                if(node === parent.left) {
+                    this.nodeRotateLeft(parent);
                     sibling.right.red = false;
                 } else {
-                    this._nodeRotateRight(parent);
+                    this.nodeRotateRight(parent);
                     sibling.left.red = false;
                 }
             }
         }
-    },
-
-    _nodeIterate: function (node, fn, arg) {
-        if (node.left) {
-            this._nodeIterate(node.left, fn, arg);
+    };
+    RedBlackTree.prototype.nodeIterate = function (node, fn, thisObject) {
+        if(node.left) {
+            this.nodeIterate(node.left, fn, thisObject);
         }
-        fn.call(arg || this, node.data, node);
-        if (node.right) {
-            this._nodeIterate(node.right, fn, arg);
+        fn.call(thisObject || this, node.data, node);
+        if(node.right) {
+            this.nodeIterate(node.right, fn, thisObject);
         }
-    },
-
-    _nodeRemoveMin: function (node) {
-        // Note: child is nullable.
-        var child = node.left || node.right,
-            sibling = this._nodeSibling(node);
-        if (child) {
+    };
+    RedBlackTree.prototype.nodeRemoveMin = function (node) {
+        var child = node.left || node.right, sibling = this.nodeSibling(node);
+        if(child) {
             child.parent = node.parent;
         }
-        if (node.parent) {
-            if (node.parent.left === node) {
+        if(node.parent) {
+            if(node.parent.left === node) {
                 node.parent.left = child;
             } else {
                 node.parent.right = child;
@@ -1327,19 +1173,108 @@ RedBlackTree.prototype = {
         } else {
             this.root = child;
         }
-
-        if (!node.red) {
-            if (this._nodeIsRed(child)) {
+        if(!node.red) {
+            if(this.nodeIsRed(child)) {
                 child.red = false;
             } else {
-                this._nodeRemoveFixUp(child, node.parent, sibling);
+                this.nodeRemoveFixUp(child, node.parent, sibling);
             }
         }
         node.left = node.right = node.parent = null;
         node.red = false;
-    }
-};
+    };
+    return RedBlackTree;
+})();
 exports.RedBlackTree = RedBlackTree;
+var BinarySearchTree = (function (_super) {
+    __extends(BinarySearchTree, _super);
+    function BinarySearchTree(lessTest) {
+        if (typeof lessTest === "undefined") { lessTest = function (a, b) {
+            return (a < b);
+        }; }
+        _super.call(this);
+        this.lessTest = lessTest;
+    }
+    BinarySearchTree.prototype.search = function (data) {
+        return this.nodeSearch(this.root, data);
+    };
+    BinarySearchTree.prototype.searchMaxSmallerThan = function (data) {
+        return this.nodeSearchMaxSmallerThan(this.root, data);
+    };
+    BinarySearchTree.prototype.searchMinGreaterThan = function (data) {
+        return this.nodeSearchMinGreaterThan(this.root, data);
+    };
+    BinarySearchTree.prototype.insert = function (data) {
+        if(this.length === 0) {
+            this.length++;
+            this.root = new RedBlackTreeNode(data);
+            this.root.red = false;
+            return this.root;
+        } else {
+            this.length++;
+            return this.nodeInsert(this.root, data, this.lessTest);
+        }
+    };
+    BinarySearchTree.prototype.nodeSearch = function (root, data) {
+        var test = this.lessTest;
+        while(root && root.data !== data) {
+            if(test(data, root.data)) {
+                root = root.left;
+            } else {
+                root = root.right;
+            }
+        }
+        return root;
+    };
+    BinarySearchTree.prototype.nodeSearchMaxSmallerThan = function (node, data) {
+        var test = this.lessTest, last = null;
+        while(node) {
+            if(test(node.data, data)) {
+                last = node;
+                node = node.right;
+            } else {
+                node = node.left;
+            }
+        }
+        return last;
+    };
+    BinarySearchTree.prototype.nodeSearchMinGreaterThan = function (root, data) {
+        var test = this.lessTest, last = null;
+        while(root) {
+            if(test(data, root.data)) {
+                last = root;
+                root = root.left;
+            } else {
+                root = root.right;
+            }
+        }
+        return last;
+    };
+    BinarySearchTree.prototype.nodeInsert = function (refNode, data, lessTest) {
+        var result;
+        if(lessTest(data, refNode.data)) {
+            if(!refNode.left) {
+                return this.insertBefore(new RedBlackTreeNode(data), refNode);
+            } else {
+                return this.nodeInsert(refNode.left, data, lessTest);
+            }
+        } else {
+            if(!refNode.right) {
+                return this.insertAfter(new RedBlackTreeNode(data), refNode);
+            } else {
+                return this.nodeInsert(refNode.right, data, lessTest);
+            }
+        }
+    };
+    BinarySearchTree.prototype.remove = function (data) {
+        if(this.length) {
+            this.removeNode(this.search(data));
+        }
+    };
+    return BinarySearchTree;
+})(RedBlackTree);
+exports.BinarySearchTree = BinarySearchTree;
+
 });
 
 require.define("/mp/BigInteger.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -1974,70 +1909,55 @@ function MPInteger(array, sign) {
 exports.MPInteger = MPInteger;
 });
 
-require.define("/dsp/FFT.js",function(require,module,exports,__dirname,__filename,process,global){/**
- * Created with JetBrains WebStorm.
- * User: Bei ZHANG
- * Date: 12/28/12
- * Time: 1:51 AM
- * To change this template use File | Settings | File Templates.
- */
-
-
-function FastFourierTransform(length) {
-    var n, k, d, i, c, rev;
-    n = this.length = length;
-    this.sinTable = FastFourierTransform.sinTable;
-    this.cosTable = FastFourierTransform.cosTable;
-    for (d = 1; d < n; d <<= 1) {
-        if (!(d in this.sinTable)) {
-            this.sinTable[d] = Math.sin(-Math.PI / d);
-            this.cosTable[d] = Math.cos(Math.PI / d);
-        }
-    }
-    this.reverseTable = FastFourierTransform.reverseTable[n];
-    if (!this.reverseTable) {
-        FastFourierTransform.reverseTable[n] = this.reverseTable = [];
-        for (i = 0; i < n; i++) {
-            c = n >> 1;
-            k = i;
-            rev = 0;
-            while (c) {
-                rev <<= 1;
-                rev |= k & 1;
-                c >>= 1;
-                k >>= 1;
+require.define("/dsp/FFT.js",function(require,module,exports,__dirname,__filename,process,global){var FastFourierTransform = (function () {
+    function FastFourierTransform(length) {
+        this.length = length;
+        var n, k, d, i, c, rev;
+        n = length;
+        this.sinTable = FastFourierTransform.sinTable;
+        this.cosTable = FastFourierTransform.cosTable;
+        for(d = 1; d < n; d <<= 1) {
+            if(!(d in this.sinTable)) {
+                this.sinTable[d] = Math.sin(-Math.PI / d);
+                this.cosTable[d] = Math.cos(Math.PI / d);
             }
-            this.reverseTable[i] = rev;
+        }
+        this.reverseTable = FastFourierTransform.reverseTable[n];
+        if(!this.reverseTable) {
+            FastFourierTransform.reverseTable[n] = this.reverseTable = [];
+            for(i = 0; i < n; i++) {
+                c = n >> 1;
+                k = i;
+                rev = 0;
+                while(c) {
+                    rev <<= 1;
+                    rev |= k & 1;
+                    c >>= 1;
+                    k >>= 1;
+                }
+                this.reverseTable[i] = rev;
+            }
         }
     }
-}
-
-FastFourierTransform.sinTable = {};
-
-FastFourierTransform.cosTable = {};
-
-FastFourierTransform.reverseTable = {};
-
-FastFourierTransform.prototype = {
-    _fftcore: function (list) {
-        var n = this.length,
-            i, m, k, omreal, omimag, oreal, oimag, id1, id2,
-            tr, ti, tmpReal,
-            sinTable = this.sinTable,
-            cosTable = this.cosTable;
+    FastFourierTransform.sinTable = {
+    };
+    FastFourierTransform.cosTable = {
+    };
+    FastFourierTransform.reverseTable = [];
+    FastFourierTransform.prototype.fftcore = function (list) {
+        var n = this.length, i, m, k, omreal, omimag, oreal, oimag, id1, id2, tr, ti, tmpReal, sinTable = this.sinTable, cosTable = this.cosTable;
         m = 1;
-        while (m < n) {
+        while(m < n) {
             omreal = cosTable[m];
             omimag = sinTable[m];
             oreal = 1;
             oimag = 0;
-            for (k = 0; k < m; k++) {
-                for (i = k; i < n; i += m << 1) {
+            for(k = 0; k < m; k++) {
+                for(i = k; i < n; i += m << 1) {
                     id1 = i << 1;
                     id2 = (i + m) << 1;
                     tr = (oreal * list[id2]) - (oimag * list[id2 + 1]);
                     ti = (oreal * list[id2 + 1]) + (oimag * list[id2]);
-
                     list[id2] = list[id1] - tr;
                     list[id2 + 1] = list[id1 + 1] - ti;
                     list[id1] += tr;
@@ -2049,40 +1969,39 @@ FastFourierTransform.prototype = {
             }
             m = m << 1;
         }
-    },
-    forward: function (list) {
+    };
+    FastFourierTransform.prototype.forward = function (list) {
         var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-        if (n == 1) {
+        if(n == 1) {
             list.push(0);
             return list;
         } else {
-            for (i = 0; i < n; i++) {
+            for(i = 0; i < n; i++) {
                 rev = reverseTable[i];
-                if (rev < i) {
+                if(rev < i) {
                     a = list[i];
                     list[i] = list[rev];
                     list[rev] = a;
                 }
             }
-            // Expand to complex
             list.length = n * 2;
-            for (i = n - 1; i >= 0; i--) {
+            for(i = n - 1; i >= 0; i--) {
                 list[i * 2 + 1] = 0;
                 list[i * 2] = list[i];
             }
-            this._fftcore(list);
+            this.fftcore(list);
         }
         return list;
-    },
-    backward: function (list) {
+    };
+    FastFourierTransform.prototype.backward = function (list) {
         var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-        if (n == 1) {
+        if(n == 1) {
             list.length = 1;
             return list;
         } else {
-            for (i = 0; i < n; i++) {
+            for(i = 0; i < n; i++) {
                 rev = reverseTable[i];
-                if (rev < i) {
+                if(rev < i) {
                     a = list[i * 2];
                     list[i * 2] = list[rev * 2];
                     list[rev * 2] = a;
@@ -2091,51 +2010,44 @@ FastFourierTransform.prototype = {
                     list[rev * 2 + 1] = a;
                 }
             }
-            for (i = 0; i < n; i++) {
+            for(i = 0; i < n; i++) {
                 list[i * 2 + 1] = -list[i * 2 + 1];
             }
-            this._fftcore(list);
-            for (i = 0; i < n; i++) {
+            this.fftcore(list);
+            for(i = 0; i < n; i++) {
                 list[i] = list[i << 1] / n;
             }
             list.length = n;
             return list;
         }
-    }
-};
-
+    };
+    return FastFourierTransform;
+})();
 function fft(list, length) {
-    var i,
-        len = list.length,
-        n = length || len,
-        expn = 1 << Math.ceil(Math.log(n) / Math.log(2));
+    var i, len = list.length, n = length || len, expn = 1 << Math.ceil(Math.log(n) / Math.log(2));
     list.length = expn;
-    for (i = len; i < expn; i++) {
+    for(i = len; i < expn; i++) {
         list[i] = 0;
     }
-    if (!FastFourierTransform[expn]) {
+    if(!FastFourierTransform[expn]) {
         FastFourierTransform[expn] = new FastFourierTransform(expn);
     }
     return FastFourierTransform[expn].forward(list);
 }
-
+exports.fft = fft;
 function ifft(list, length) {
-    var i,
-        len = list.length,
-        n = length || len,
-        expn = 1 << Math.ceil(Math.log(n) / Math.log(2));
+    var i, len = list.length, n = length || len, expn = 1 << Math.ceil(Math.log(n) / Math.log(2));
     list.length = expn;
-    for (i = len; i < expn; i++) {
+    for(i = len; i < expn; i++) {
         list[i] = 0;
     }
-    if (!FastFourierTransform[expn / 2]) {
+    if(!FastFourierTransform[expn / 2]) {
         FastFourierTransform[expn / 2] = new FastFourierTransform(expn / 2);
     }
     return FastFourierTransform[expn / 2].backward(list);
 }
-
-exports.fft = fft;
 exports.ifft = ifft;
+
 });
 
 require.define("/browser.js",function(require,module,exports,__dirname,__filename,process,global){global.fast = require("./fast.js");

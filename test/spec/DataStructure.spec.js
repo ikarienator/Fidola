@@ -1,5 +1,5 @@
 describe("Data Structure", function () {
-    describe("Red-Black Tree", function () {
+    describe("Binary Search Tree", function () {
         var data = [],
             seed = 1.72;
 
@@ -87,11 +87,11 @@ describe("Data Structure", function () {
         }
 
         it("initialize", function () {
-            new fast.ds.RedBlackTree();
+            new fast.ds.BinarySearchTree();
         });
 
         it("insert", function () {
-            var rbTree = new fast.ds.RedBlackTree(), node;
+            var rbTree = new fast.ds.BinarySearchTree(), node;
             for (var i = 0; i < data.length; i++) {
                 node = rbTree.insert(data[i]);
                 if (i < 30) {
@@ -103,7 +103,7 @@ describe("Data Structure", function () {
         });
 
         it("search", function () {
-            var rbTree = new fast.ds.RedBlackTree();
+            var rbTree = new fast.ds.BinarySearchTree();
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
             }
@@ -121,7 +121,7 @@ describe("Data Structure", function () {
         });
 
         it("iterate", function () {
-            var rbTree = new fast.ds.RedBlackTree(), i, curr;
+            var rbTree = new fast.ds.BinarySearchTree(), i, curr;
 
             i = 0;
             rbTree.iterate(function (item, node) {
@@ -159,7 +159,7 @@ describe("Data Structure", function () {
         });
 
         it("inversed less test", function () {
-            var rbTree = new fast.ds.RedBlackTree(function (a, b) {
+            var rbTree = new fast.ds.BinarySearchTree(function (a, b) {
                 return a > b;
             }), i, curr;
             for (var i = 0; i < data.length; i++) {
@@ -187,7 +187,7 @@ describe("Data Structure", function () {
         });
 
         it("inexact search", function () {
-            var rbTree = new fast.ds.RedBlackTree();
+            var rbTree = new fast.ds.BinarySearchTree();
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
             }
@@ -202,7 +202,7 @@ describe("Data Structure", function () {
         });
 
         it("remove", function () {
-            var rbTree = new fast.ds.RedBlackTree(),
+            var rbTree = new fast.ds.BinarySearchTree(),
                 index = [];
             rbTree.remove(data[0]);
             for (var i = 0; i < data.length; i++) {
@@ -222,7 +222,7 @@ describe("Data Structure", function () {
         });
 
         it("balance", function () {
-            var rbTree = new fast.ds.RedBlackTree();
+            var rbTree = new fast.ds.BinarySearchTree();
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
             }
