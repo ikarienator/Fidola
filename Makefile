@@ -13,6 +13,7 @@ fast.js: Makefile\
 	lib/datastructure/BinaryHeap.js \
 	lib/datastructure/RedBlackTree.js \
 	lib/dsp/FFT.js \
+	lib/dsp/FNTT.js \
 	lib/mp/BigInteger.js \
 	lib/browser.js \
 	lib/fast.js

@@ -1,10 +1,10 @@
 describe("Data Structure", function () {
     describe("Red-Black Tree", function () {
         var data = [],
-            seed = 1.72;
+            seed = 1.5;
 
         function random() {
-            seed *= 12421;
+            seed *= 124.21;
             seed -= Math.floor(seed);
             return seed;
         }
@@ -24,13 +24,19 @@ describe("Data Structure", function () {
                     expect("Revision").to.be(false);
                 }
                 node.revision = revision;
-                expect(node.parent).to.be(parent);
+                if (node.parent != parent) {
+                    expect(node.parent).to.be(parent);
+                }
                 if (node.left) {
-                    expect(node.left.data).not.to.greaterThan(node.data);
+                    if (node.left.data > node.data) {
+                        expect(node.left.data).not.to.greaterThan(node.data);
+                    }
                     testTopo(node.left, node);
                 }
                 if (node.right) {
-                    expect(node.data).not.to.greaterThan(node.right.data);
+                    if (node.data > node.right.data) {
+                        expect(node.data).not.to.greaterThan(node.right.data);
+                    }
                     testTopo(node.right, node);
                 }
             }
@@ -56,7 +62,9 @@ describe("Data Structure", function () {
                         if (count === null) {
                             count = depth;
                         } else {
-                            expect(depth).eql(count);
+                            if (depth != count) {
+                                expect(depth).eql(count);
+                            }
                         }
                     }
                 }
@@ -88,14 +96,17 @@ describe("Data Structure", function () {
 
         it("initialize", function () {
             new fast.ds.RedBlackTree();
+            new fast.ds.BinarySearchTree();
         });
 
         it("insert", function () {
-            var rbTree = new fast.ds.RedBlackTree(), node;
+            var rbTree = new fast.ds.BinarySearchTree(), node;
             for (var i = 0; i < data.length; i++) {
                 node = rbTree.insert(data[i]);
-                if (i < 30) {
-                    expect(node.data).to.be(data[i]);
+                if (i % 30 == 0) {
+                    if (node.data !== data[i]) {
+                        expect(node.data).to.be(data[i]);
+                    }
                 }
             }
             checkTopo(rbTree.root);
@@ -103,30 +114,38 @@ describe("Data Structure", function () {
         });
 
         it("search", function () {
-            var rbTree = new fast.ds.RedBlackTree();
+            var rbTree = new fast.ds.BinarySearchTree();
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
             }
 
             for (var i = 0; i < data.length; i++) {
-                expect(rbTree.search(data[i])).not.to.be(null);
+                if (rbTree.search(data[i]) === null) {
+                    expect(rbTree.search(data[i])).not.to.be(null);
+                }
             }
 
             for (var i = 0; i < 40; i++) {
-                expect(rbTree.search(data[i] + 300000)).to.be(null);
+                if (rbTree.search(data[i] + 300000) !== null) {
+                    expect(rbTree.search(data[i] + 300000)).to.be(null);
+                }
             }
             for (var i = 0; i < 40; i++) {
-                expect(rbTree.search(data[i] - 300000)).to.be(null);
+                if (rbTree.search(data[i] - 300000) !== null) {
+                    expect(rbTree.search(data[i] - 300000)).to.be(null);
+                }
             }
         });
 
         it("iterate", function () {
-            var rbTree = new fast.ds.RedBlackTree(), i, curr;
+            var rbTree = new fast.ds.BinarySearchTree(), i, curr;
 
             i = 0;
             rbTree.iterate(function (item, node) {
                 if (i < data.length) {
-                    expect(node.data).eql(sorted[i]);
+                    if (node.data != sorted[i]) {
+                        expect(node.data).eql(sorted[i]);
+                    }
                 }
                 i++;
             });
@@ -142,24 +161,30 @@ describe("Data Structure", function () {
             i = 0;
             rbTree.iterate(function (item, node) {
                 if (i < data.length) {
-                    expect(node.data).eql(sorted[i]);
+                    if (node.data != sorted[i]) {
+                        expect(node.data).eql(sorted[i]);
+                    }
                 }
                 i++;
             });
 
             for (curr = rbTree.first(), i = 0; curr && i < data.length; curr = rbTree.next(curr), i++) {
-                expect(curr.data).eql(sorted[i]);
+                if (curr.data != sorted[i]) {
+                    expect(curr.data).eql(sorted[i]);
+                }
             }
             expect(i).eql(data.length);
             expect(curr).to.be(null);
             for (curr = rbTree.last(), i = data.length - 1; curr && i < data.length + 10; curr = rbTree.prev(curr), i--) {
-                expect(curr.data).eql(sorted[i]);
+                if (curr.data != sorted[i]) {
+                    expect(curr.data).eql(sorted[i]);
+                }
             }
             expect(curr).to.be(null);
         });
 
         it("inversed less test", function () {
-            var rbTree = new fast.ds.RedBlackTree(function (a, b) {
+            var rbTree = new fast.ds.BinarySearchTree(function (a, b) {
                 return a > b;
             }), i, curr;
             for (var i = 0; i < data.length; i++) {
@@ -167,42 +192,66 @@ describe("Data Structure", function () {
             }
 
             for (var i = 0; i < data.length; i++) {
-                expect(rbTree.search(data[i])).not.to.be(null);
+                if (rbTree.search(data[i]) === null) {
+                    expect(rbTree.search(data[i])).not.to.be(null);
+                }
             }
 
             for (var i = 0; i < 40; i++) {
-                expect(rbTree.search(data[i] + 300000)).to.be(null);
+                if (rbTree.search(data[i] + 300000) !== null) {
+                    expect(rbTree.search(data[i] + 300000)).to.be(null);
+                }
             }
             for (var i = 0; i < 40; i++) {
-                expect(rbTree.search(data[i] - 300000)).to.be(null);
+                if (rbTree.search(data[i] - 300000) !== null) {
+                    expect(rbTree.search(data[i] - 300000)).to.be(null);
+                }
             }
 
             i = 0;
             rbTree.iterate(function (item, node) {
                 if (i < data.length) {
-                    expect(node.data).eql(sorted[data.length - i - 1]);
+                    if (node.data != sorted[data.length - i - 1]) {
+                        expect(node.data).eql(sorted[data.length - i - 1]);
+                    }
                 }
                 i++;
             });
         });
 
         it("inexact search", function () {
-            var rbTree = new fast.ds.RedBlackTree();
+            var rbTree = new fast.ds.BinarySearchTree();
+            var node;
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
             }
-            expect(rbTree.searchMaxSmallerThan(sorted[0])).to.be(null);
+            node = rbTree.searchMaxSmallerThan(sorted[0]);
+            if (node === null) {
+                expect(node).to.be(null);
+            }
             for (var i = 1; i < data.length; i++) {
-                expect(rbTree.searchMaxSmallerThan((sorted[i - 1] + sorted[i]) / 2).data).to.eql(sorted[i - 1]);
-                expect(rbTree.searchMaxSmallerThan(sorted[i]).data).to.eql(sorted[i - 1]);
-                expect(rbTree.searchMinGreaterThan((sorted[i - 1] + sorted[i]) / 2).data).to.eql(sorted[i]);
-                expect(rbTree.searchMinGreaterThan(sorted[i - 1]).data).to.eql(sorted[i]);
+                node = rbTree.searchMaxSmallerThan((sorted[i - 1] + sorted[i]) / 2);
+                if (node.data != sorted[i - 1]) {
+                    expect(node.data).to.eql(sorted[i - 1]);
+                }
+                node = rbTree.searchMaxSmallerThan(sorted[i]);
+                if (node.data != sorted[i - 1]) {
+                    expect(node.data).to.eql(sorted[i - 1]);
+                }
+                node = rbTree.searchMinGreaterThan((sorted[i - 1] + sorted[i]) / 2);
+                if (node.data != sorted[i]) {
+                    expect(node.data).to.eql(sorted[i]);
+                }
+                node = rbTree.searchMinGreaterThan(sorted[i - 1]);
+                if (node.data != sorted[i]) {
+                    expect(node.data).to.eql(sorted[i]);
+                }
             }
             expect(rbTree.searchMinGreaterThan(sorted[i - 1])).to.be(null);
         });
 
         it("remove", function () {
-            var rbTree = new fast.ds.RedBlackTree(),
+            var rbTree = new fast.ds.BinarySearchTree(),
                 index = [];
             rbTree.remove(data[0]);
             for (var i = 0; i < data.length; i++) {
@@ -222,7 +271,7 @@ describe("Data Structure", function () {
         });
 
         it("balance", function () {
-            var rbTree = new fast.ds.RedBlackTree();
+            var rbTree = new fast.ds.BinarySearchTree();
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
             }
@@ -235,7 +284,9 @@ describe("Data Structure", function () {
             checkBlackCount(rbTree);
 
             for (var i = 0; i < 30; i++) {
-                expect(rbTree.search(data[i])).to.be(null);
+                if (rbTree.search(data[i]) !== null) {
+                    expect(rbTree.search(data[i])).to.be(null);
+                }
             }
 
             for (var i = 0; i < 30; i++) {
@@ -243,7 +294,9 @@ describe("Data Structure", function () {
             }
 
             for (var i = 0; i < 30; i++) {
-                expect(rbTree.search(data[i])).not.to.be(null);
+                if (rbTree.search(data[i]) === null) {
+                    expect(rbTree.search(data[i])).not.to.be(null);
+                }
             }
             expect(getDepth(rbTree)).to.lessThan(Math.ceil(Math.log(rbTree.length + 1) / Math.log(2) * 2));
         });

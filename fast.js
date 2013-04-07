@@ -413,6 +413,7 @@ includes(mp, require("./mp/BigInteger.js"));
 
 var dsp = fast.dsp = {};
 includes(dsp, require("./dsp/FFT.js"));
+includes(dsp, require("./dsp/FNTT.js"));
 });
 
 require.define("/sequence/KMP.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -910,79 +911,82 @@ binaryHeap_prototype.size = function () {
 exports.BinaryHeap = BinaryHeap;
 });
 
-require.define("/datastructure/RedBlackTree.js",function(require,module,exports,__dirname,__filename,process,global){function RedBlackTree(lessTest) {
-    if (lessTest) {
-        this.lessTest = lessTest;
-    }
-}
-
+require.define("/datastructure/RedBlackTree.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ * @class
+ * @constructor
+ * @property {*} data
+ * @param {*} data
+ */
 function RedBlackTreeNode(data) {
     this.data = data;
 }
 
 RedBlackTreeNode.prototype = {
+    /**
+     * @property {RedBlackTreeNode} parent
+     */
     parent: null,
-    red: true,
+
+    /**
+     * @property {RedBlackTreeNode} left
+     */
     left: null,
+
+    /**
+     * @property {RedBlackTreeNode} right
+     */
     right: null,
+
+    /**
+     * @property {boolean} red
+     */
+    red: true,
     data: null
 };
 
-RedBlackTree.prototype = {
-    lessTest: function (a, b) {
-        return a < b;
-    },
+/**
+ * @class
+ * @property {RedBlackTreeNode} root
+ * @property {Number} length
+ * @constructor
+ */
+function RedBlackTree() {
+    this.root = null;
+}
 
+RedBlackTree.prototype = {
     root: null,
 
     length: 0,
 
+    /**
+     *
+     * @param {RedBlackTreeNode} newNode
+     * @param {RedBlackTreeNode} oldNode
+     */
     beforeNodeSwap: function (newNode, oldNode) {
     },
 
     /**
-     *
-     * @param {*} data
-     * @return {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
      */
-    search: function (data) {
-        return this._nodeSearch(this.root, data);
-    },
-
-    searchMaxSmallerThan: function (data) {
-        return this._nodeSearchMaxSmallerThan(this.root, data);
-    },
-
-    searchMinGreaterThan: function (data) {
-        return this._nodeSearchMinGreaterThan(this.root, data);
-    },
-
-    /**
-     *
-     * @param data
-     */
-    insert: function (data) {
-        if (this.length === 0) {
-            this.length++;
-            this.root = new RedBlackTreeNode(data);
-            this.root.red = false;
-            return this.root;
-        } else {
-            this.length++;
-            return this._nodeInsert(this.root, data, this.lessTest);
-        }
-
-    },
-
     first: function () {
         return this._nodeLeftMost(this.root);
     },
 
+    /**
+     *
+     * @returns {RedBlackTreeNode}
+     */
     last: function () {
         return this._nodeRightMost(this.root);
     },
 
-
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
+     */
     next: function (node) {
         if (node.right) {
             return this._nodeLeftMost(node.right);
@@ -998,6 +1002,11 @@ RedBlackTree.prototype = {
         }
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
+     */
     prev: function (node) {
         if (node.left) {
             return this._nodeRightMost(node.left);
@@ -1026,28 +1035,27 @@ RedBlackTree.prototype = {
 
     /**
      *
-     * @param data
+     * @param {RedBlackTreeNode} node
      */
-    remove: function (data) {
-        if (this.length) {
-            this.removeNode(this.search(data));
-        }
-    },
-
     removeNode: function (node) {
         var minNode;
         if (node) {
             if (node.right) {
                 minNode = this._nodeLeftMost(node.right);
                 this.swap(node, minNode);
-                this._nodeRemoveMin(minNode);
+                this._nodeRemoveLeftMost(minNode);
             } else {
-                this._nodeRemoveMin(node);
+                this._nodeRemoveLeftMost(node);
             }
             this.length--;
         }
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node1
+     * @param {RedBlackTreeNode} node2
+     */
     swap: function (node1, node2) {
         var data1 = node1.data, data2 = node2.data;
         this.beforeNodeSwap(node1, node2);
@@ -1055,6 +1063,12 @@ RedBlackTree.prototype = {
         node2.data = data1;
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
+     * @private
+     */
     _nodeLeftMost: function (node) {
         while (node && node.left) {
             node = node.left;
@@ -1062,6 +1076,12 @@ RedBlackTree.prototype = {
         return node;
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
+     * @private
+     */
     _nodeRightMost: function (node) {
         while (node && node.right) {
             node = node.right;
@@ -1069,10 +1089,22 @@ RedBlackTree.prototype = {
         return node;
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {boolean}
+     * @private
+     */
     _nodeIsRed: function (node) {
-        return node && node.red;
+        return !!(node && node.red);
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {*}
+     * @private
+     */
     _nodeSibling: function (node) {
         if (node && node.parent) {
             return node == node.parent.left ? node.parent.right : node.parent.left;
@@ -1081,13 +1113,27 @@ RedBlackTree.prototype = {
         }
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @private
+     */
     _nodeColorFlip: function (node) {
         node.red = !node.red;
         node.left.red = !node.left.red;
         node.right.red = !node.right.red;
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @private
+     */
     _nodeRotateLeft: function (node) {
+        /**
+         *
+         * @type {null|RedBlackTreeNode}
+         */
         var target = node.right;
         target.parent = node.parent;
         if (node.parent) {
@@ -1107,7 +1153,16 @@ RedBlackTree.prototype = {
         node.parent = target;
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @private
+     */
     _nodeRotateRight: function (node) {
+        /**
+         *
+         * @type {RedBlackTreeNode}
+         */
         var target = node.left;
         target.parent = node.parent;
         if (node.parent) {
@@ -1127,46 +1182,47 @@ RedBlackTree.prototype = {
         node.parent = target;
     },
 
-    _nodeSearch: function (node, data) {
-        var test = this.lessTest;
-        while (node && node.data !== data) {
-            if (test(data, node.data)) {
-                node = node.left;
-            } else {
-                node = node.right;
-            }
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @param {RedBlackTreeNode} newNode
+     * @returns {RedBlackTreeNode}
+     */
+    insertBefore: function (node, newNode) {
+        if (!node.left) {
+            node.left = newNode;
+            newNode.parent = node;
+            this._nodeInsertFixUp(newNode);
+            return newNode;
+        } else {
+            return this.insertAfter(this._nodeRightMost(node.left), newNode);
         }
-        return node;
     },
 
-    _nodeSearchMaxSmallerThan: function (node, data) {
-        var test = this.lessTest,
-            last = null;
-        while (node) {
-            if (test(node.data, data)) {
-                last = node;
-                node = node.right;
-            } else {
-                node = node.left;
-            }
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @param {RedBlackTreeNode} newNode
+     * @returns {RedBlackTreeNode}
+     */
+    insertAfter: function (node, newNode) {
+
+        if (!node.right) {
+            node.right = newNode;
+            newNode.parent = node;
+            this._nodeInsertFixUp(newNode);
+            return newNode;
+        } else {
+            return this.insertBefore(this._nodeLeftMost(node.right), newNode);
         }
-        return last;
     },
 
-    _nodeSearchMinGreaterThan: function (node, data) {
-        var test = this.lessTest,
-            last = null;
-        while (node) {
-            if (test(data, node.data)) {
-                last = node;
-                node = node.left;
-            } else {
-                node = node.right;
-            }
-        }
-        return last;
-    },
-
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
+     * @private
+     */
     _nodeInsertFixUp: function (node) {
         // Case 1
         // assert node.red
@@ -1175,13 +1231,25 @@ RedBlackTree.prototype = {
         } else if (node.parent.red) {
             // Case 2
             // Always has a grand parent
-            var p = node.parent,
-                g = p.parent,
-                u = g.left === p ? g.right : g.left;
+            /**
+             *
+             * @type {RedBlackTreeNode}
+             */
+            var p = node.parent;
+            /**
+             *
+             * @type {RedBlackTreeNode}
+             */
+            var g = p.parent;
+            /**
+             *
+             * @type {RedBlackTreeNode}
+             */
+            var u = g.left === p ? g.right : g.left;
             if (this._nodeIsRed(u)) {
                 // Case 3
                 this._nodeColorFlip(g);
-                this._nodeInsertFixUp(g);
+                return this._nodeInsertFixUp(g);
             } else {
                 // Case 4
                 if (node === p.right && p === g.left) {
@@ -1218,30 +1286,13 @@ RedBlackTree.prototype = {
         return node;
     },
 
-    _nodeInsert: function (node, data, lessTest) {
-        var result;
-        // assert node !== null
-        if (lessTest(data, node.data)) {
-            if (!node.left) {
-                result = node.left = new RedBlackTreeNode(data);
-                node.left.parent = node;
-                this._nodeInsertFixUp(node.left);
-                return result;
-            } else {
-                return this._nodeInsert(node.left, data, lessTest);
-            }
-        } else {
-            if (!node.right) {
-                result = node.right = new RedBlackTreeNode(data);
-                node.right.parent = node;
-                this._nodeInsertFixUp(node.right);
-                return result;
-            } else {
-                return this._nodeInsert(node.right, data, lessTest);
-            }
-        }
-    },
-
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @param {RedBlackTreeNode} parent
+     * @param {RedBlackTreeNode} sibling
+     * @private
+     */
     _nodeRemoveFixUp: function (node, parent, sibling) {
         if (parent !== null) {
             // Case 2
@@ -1301,6 +1352,13 @@ RedBlackTree.prototype = {
         }
     },
 
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @param {Function} fn
+     * @param arg
+     * @private
+     */
     _nodeIterate: function (node, fn, arg) {
         if (node.left) {
             this._nodeIterate(node.left, fn, arg);
@@ -1311,10 +1369,23 @@ RedBlackTree.prototype = {
         }
     },
 
-    _nodeRemoveMin: function (node) {
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @private
+     */
+    _nodeRemoveLeftMost: function (node) {
         // Note: child is nullable.
-        var child = node.left || node.right,
-            sibling = this._nodeSibling(node);
+        /**
+         *
+         * @type {RedBlackTreeNode}
+         */
+        var child = node.left || node.right;
+        /**
+         *
+         * @type {RedBlackTreeNode}
+         */
+        var sibling = this._nodeSibling(node);
         if (child) {
             child.parent = node.parent;
         }
@@ -1339,17 +1410,183 @@ RedBlackTree.prototype = {
         node.red = false;
     }
 };
+
+/**
+ * @class
+ * @extends RedBlackTree
+ * @param {Function} lessTest
+ * @constructor
+ */
+var BinarySearchTree = function (lessTest) {
+    if (lessTest) {
+        this.lessTest = lessTest;
+    }
+};
+
+var BinarySearchTree_prototype = BinarySearchTree.prototype = new RedBlackTree();
+
+/**
+ *
+ * @param a
+ * @param b
+ * @returns {boolean}
+ */
+BinarySearchTree_prototype.lessTest = function (a, b) {
+    return a < b;
+};
+
+/**
+ *
+ * @param data
+ * @returns {RedBlackTreeNode}
+ */
+BinarySearchTree_prototype.search = function (data) {
+    return this._nodeSearch(this.root, data);
+};
+
+/**
+ *
+ * @param data
+ * @returns {RedBlackTreeNode}
+ */
+BinarySearchTree_prototype.searchMaxSmallerThan = function (data) {
+    return this._nodeSearchMaxSmallerThan(this.root, data);
+};
+
+/**
+ *
+ * @param data
+ * @returns {RedBlackTreeNode}
+ */
+BinarySearchTree_prototype.searchMinGreaterThan = function (data) {
+    return this._nodeSearchMinGreaterThan(this.root, data);
+};
+
+/**
+ *
+ * @param {RedBlackTreeNode} node
+ * @param data
+ * @returns {RedBlackTreeNode}
+ * @private
+ */
+BinarySearchTree_prototype._nodeSearch = function (node, data) {
+    var test = this.lessTest;
+    while (node && node.data !== data) {
+        if (test(data, node.data)) {
+            node = node.left;
+        } else {
+            node = node.right;
+        }
+    }
+    return node;
+};
+
+/**
+ *
+ * @param {RedBlackTreeNode} node
+ * @param data
+ * @returns {RedBlackTreeNode}
+ * @private
+ */
+BinarySearchTree_prototype._nodeSearchMaxSmallerThan = function (node, data) {
+    var test = this.lessTest,
+        last = null;
+    while (node) {
+        if (test(node.data, data)) {
+            last = node;
+            node = node.right;
+        } else {
+            node = node.left;
+        }
+    }
+    return last;
+};
+
+/**
+ *
+ * @param {RedBlackTreeNode} node
+ * @param data
+ * @returns {RedBlackTreeNode}
+ * @private
+ */
+BinarySearchTree_prototype._nodeSearchMinGreaterThan = function (node, data) {
+    var test = this.lessTest,
+        last = null;
+    while (node) {
+        if (test(data, node.data)) {
+            last = node;
+            node = node.left;
+        } else {
+            node = node.right;
+        }
+    }
+    return last;
+};
+
+/**
+ *
+ * @param data
+ * @return {RedBlackTreeNode}
+ */
+BinarySearchTree_prototype.insert = function (data) {
+    if (this.length === 0) {
+        this.length++;
+        this.root = new RedBlackTreeNode(data);
+        this.root.red = false;
+        return this.root;
+    } else {
+        this.length++;
+        return this._nodeInsert(this.root, data, this.lessTest);
+    }
+};
+
+/**
+ *
+ * @param {RedBlackTreeNode} node
+ * @param data
+ * @param lessTest
+ * @returns {RedBlackTreeNode}
+ * @private
+ */
+BinarySearchTree_prototype._nodeInsert = function (node, data, lessTest) {
+    if (lessTest(data, node.data)) {
+        if (!node.left) {
+            return this.insertBefore(node, new RedBlackTreeNode(data));
+        } else {
+            return this._nodeInsert(node.left, data, lessTest);
+        }
+    } else {
+        if (!node.right) {
+            return this.insertAfter(node, new RedBlackTreeNode(data));
+        } else {
+            return this._nodeInsert(node.right, data, lessTest);
+        }
+    }
+};
+
+/**
+ *
+ * @param data
+ */
+BinarySearchTree_prototype.remove = function (data) {
+    if (this.length) {
+        this.removeNode(this.search(data));
+    }
+};
+
+exports = exports || {};
+exports.BinarySearchTree = BinarySearchTree;
 exports.RedBlackTree = RedBlackTree;
 });
 
 require.define("/mp/BigInteger.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Natural Number
  * @param {Array} [array]
- * The element size is 0 to 32767
+ * The element size is 0 to LIMB_BITS
  * @constructor
  */
 function MPNaturalNumber(array) {
-    // 0 .. 32767 to avoid overflow in multiplication
+    // 0 .. LIMB_BITS to avoid overflow in multiplication
     this.array = array || [];
 }
 
@@ -1357,7 +1594,9 @@ MPNaturalNumber.DIGITS = "0123456789";
 
 var dsp = require("../dsp/FFT.js"),
     fft = dsp.fft,
-    ifft = dsp.ifft;
+    ifft = dsp.ifft,
+    LIMB_DEPTH = 15,
+    LIMB_BITS = 32767;
 
 /**
  *
@@ -1368,8 +1607,8 @@ MPNaturalNumber.fromNumber = function (number) {
     number = number >> 0;
     var result = new MPNaturalNumber(), i = 0;
     while (number) {
-        result.array[i++] = number & 32767;
-        number >>= 15;
+        result.array[i++] = number & LIMB_BITS;
+        number >>= LIMB_DEPTH;
     }
     return result;
 };
@@ -1440,7 +1679,7 @@ MPN_proto.toString = function () {
  */
 MPN_proto.getDigits = function (base) {
     var array, result, num;
-    if (base == 32767) {
+    if (base == LIMB_BITS) {
         return this.array.slice(0);
     } else if (base == 32) {
         array = this.array;
@@ -1472,7 +1711,7 @@ MPN_proto.getDigits = function (base) {
     result = [];
     while (array.length > 0) {
         for (var i = array.length - 1, carry = 0; i >= 0; i--) {
-            array[i] += carry << 15;
+            array[i] += carry << LIMB_DEPTH;
             carry = array[i] % base;
             array[i] /= base;
             array[i] >>= 0;
@@ -1498,12 +1737,12 @@ MPN_proto.normalize = function () {
         carry = 0;
     for (var i = 0; i < len; i++) {
         carry += array[i];
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     while (carry) {
-        array[i++] = carry & 32767;
-        carry >>= 15;
+        array[i++] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     while (array.length > 0 && array[array.length - 1] === 0) {
         array.length--;
@@ -1559,16 +1798,16 @@ MPN_proto._cmp_offset_a = function (array, offset) {
  */
 MPN_proto.shiftLeft = function (bits) {
     var array = this.array, len = array.length, i, block_shift;
-    if (bits >= 15) {
-        block_shift = bits / 15 >> 0;
-        bits %= 15;
+    if (bits >= LIMB_DEPTH) {
+        block_shift = bits / LIMB_DEPTH >> 0;
+        bits %= LIMB_DEPTH;
     }
-    if ((array[len - 1] << bits) >= 1 << 15) {
+    if ((array[len - 1] << bits) >= 1 << LIMB_DEPTH) {
         array[len++] = 0;
     }
     array.length += block_shift;
     for (i = len - 1; i > 0; i--) {
-        array[i + block_shift] = (array[i] << bits) | (array[i - 1] >> (15 - bits));
+        array[i + block_shift] = (array[i] << bits) | (array[i - 1] >> (LIMB_DEPTH - bits));
     }
     array[block_shift] = array[0] << bits;
     for (i = 0; i < block_shift; i++) {
@@ -1624,13 +1863,13 @@ MPN_proto._add_bi = function (num) {
     }
     for (i = 0, carry = 0; i < len2; i++) {
         carry += array[i] + array2[i];
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     while (carry) {
         carry += array[i];
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
         i++;
     }
     return this;
@@ -1644,14 +1883,14 @@ MPN_proto._add_bi = function (num) {
 MPN_proto._add_1 = function (num) {
     var array = this.array,
         len = array.length;
-    for (var i = 0, carry = num; i < len; i++) {
+    for (var i = 0, carry = num; carry && i < len; i++) {
         carry += array[i];
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     while (carry) {
-        array[i++] = carry & 32767;
-        carry >>= 15;
+        array[i++] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     return this;
 };
@@ -1665,8 +1904,8 @@ MPN_proto._minus_1 = function (num) {
         i = 0, carry = -num;
     while (carry) {
         carry += array[i];
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     return this;
 };
@@ -1683,13 +1922,13 @@ MPN_proto._minus_bi = function (num) {
         i, carry = 0;
     for (i = 0, carry; i < len2; i++) {
         carry += array[i] - array2[i];
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     while (carry) {
         carry += array[i];
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     return this;
 };
@@ -1749,16 +1988,16 @@ MPN_proto._mult_bi = function (num) {
         if (left > 0) {
             for (j = 0, carry = 0; j < len2; j++) {
                 carry += target[i + j] + left * array2[j];
-                target[i + j] = carry & 32767;
-                carry >>= 15;
+                target[i + j] = carry & LIMB_BITS;
+                carry >>= LIMB_DEPTH;
             }
             while (carry) {
                 if (i + j >= target.length) {
                     target[i + j] = 0;
                 }
                 carry += target[i + j];
-                target[i + j] = carry & 32767;
-                carry >>= 15;
+                target[i + j] = carry & LIMB_BITS;
+                carry >>= LIMB_DEPTH;
             }
         }
     }
@@ -1776,12 +2015,12 @@ MPN_proto._mult_1 = function (num) {
         len = array.length;
     for (var i = 0, carry = 0; i < len; i++) {
         carry += array[i] * num;
-        array[i] = carry & 32767;
-        carry >>= 15;
+        array[i] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     while (carry) {
-        array[i++] = carry & 32767;
-        carry >>= 15;
+        array[i++] = carry & LIMB_BITS;
+        carry >>= LIMB_DEPTH;
     }
     return this;
 };
@@ -1861,7 +2100,7 @@ MPN_proto._divmod_1 = function (num) {
         len = array.length,
         i, carry = 0;
     for (i = len - 1; i >= 0; i--) {
-        carry <<= 15;
+        carry <<= LIMB_DEPTH;
         carry += array[i];
         array[i] = carry / num >> 0;
         carry -= array[i] * num;
@@ -1877,11 +2116,11 @@ MPN_proto._divmod_bi = function (num) {
     if (num.array.length === 1) {
         return this._divmod_1(num.array[0]);
     }
-    var array = this.array.slice(0),
-        len = array.length,
+    var r_array = this.array.slice(0),
+        len = r_array.length,
         array2 = num.array,
         len2 = array2.length,
-        a, b = 0, c = array[len - 1], m,
+        a, b = 0, c = r_array[len - 1], m,
         temp, j, carry, guess, cmp;
     switch (this.cmp(num)) {
         case -1:
@@ -1893,11 +2132,11 @@ MPN_proto._divmod_bi = function (num) {
             return new MPNaturalNumber();
     }
     this.array.length = len - len2 + 1;
-    m = (array2[len2 - 1] << 15) + array2[len2 - 2];
+    m = (array2[len2 - 1] << LIMB_DEPTH) + array2[len2 - 2];
     for (var offset = len - len2; offset >= 0; offset--) {
-        a = array[len2 + offset] || 0;
-        b = array[len2 + offset - 1];
-        c = array[len2 + offset - 2];
+        a = r_array[len2 + offset] || 0;
+        b = r_array[len2 + offset - 1];
+        c = r_array[len2 + offset - 2];
         // We want to calculate q=[(an+b)/(cn+d)] where b and d are in [0,n).
         // Our goal is to guess q=[a/c]+R.
         // -2 <= [(an+b)/(cn+d)]-[a/c] <= 2
@@ -1907,7 +2146,7 @@ MPN_proto._divmod_bi = function (num) {
         temp._mult_1(guess);
         temp._resize(len2 + (+!!a));
 
-        while (1 == (cmp = temp._cmp_offset_a(array, offset))) { // Too big a guess
+        while (1 == (cmp = temp._cmp_offset_a(r_array, offset))) { // Too big a guess
             if (guess == 0) {
                 break;
             }
@@ -1920,18 +2159,18 @@ MPN_proto._divmod_bi = function (num) {
         }
 
         for (j = 0, carry = 0; j < temp.array.length; j++) {
-            carry += array[j + offset] - temp.array[j];
-            array[j + offset] = carry & 32767;
-            carry >>= 15;
+            carry += r_array[j + offset] - temp.array[j];
+            r_array[j + offset] = carry & LIMB_BITS;
+            carry >>= LIMB_DEPTH;
         }
 
         // This should never happen
         // while (carry) {
-        //     array[offset + (j++)] = carry & 32767;
-        //     carry >>= 15;
+        //     r_array[offset + (j++)] = carry & LIMB_BITS;
+        //     carry >>= LIMB_DEPTH;
         // }
-        if (array.length > offset + len2 && array[offset + len2] == 0) {
-            array.length--;
+        if (r_array.length > offset + len2 && r_array[offset + len2] == 0) {
+            r_array.length--;
         }
         if (cmp == 0) {
             // We found it
@@ -1939,26 +2178,26 @@ MPN_proto._divmod_bi = function (num) {
         } else { // cmp == -1
             // Might be too small, might be right.
             // Never try more than 4 times
-            while (-1 == num._cmp_offset_a(array, offset)) { // Too big a guess
+            while (-1 == num._cmp_offset_a(r_array, offset)) { // Too big a guess
                 guess++;
                 for (j = 0, carry = 0; j < len2; j++) {
-                    carry += array[j + offset] - array2[j];
-                    array[j + offset] = carry & 32767;
-                    carry >>= 15;
+                    carry += r_array[j + offset] - array2[j];
+                    r_array[j + offset] = carry & LIMB_BITS;
+                    carry >>= LIMB_DEPTH;
                 }
                 if (carry) {
-                    carry += array[j + offset];
-                    array[j + offset] = carry & 32767;
-                    carry >>= 15;
+                    carry += r_array[j + offset];
+                    r_array[j + offset] = carry & LIMB_BITS;
+                    carry >>= LIMB_DEPTH;
                 }
             }
         }
-        if (array.length > offset + len2 && array[offset + len2] == 0) {
-            array.length--;
+        if (r_array.length > offset + len2 && r_array[offset + len2] == 0) {
+            r_array.length--;
         }
         this.array[offset] = guess;
     }
-    return new MPNaturalNumber(array);
+    return new MPNaturalNumber(r_array);
 };
 
 /**
@@ -1968,9 +2207,30 @@ MPN_proto._divmod_bi = function (num) {
  * @constructor
  */
 function MPInteger(array, sign) {
-    MPNaturalNumber.call(this, array);
+    this.clamp = new MPNaturalNumber(array);
+    this.sign = typeof sign === 'number' ? sign : 1;
+    this.normalize();
 }
 
+var MPZ_proto = MPInteger.prototype = new MPNaturalNumber();
+
+MPInteger.fromNumber = function (number) {
+    if (number < 0) {
+
+    }
+};
+
+/**
+ *
+ * @param {Number} num
+ */
+MPZ_proto.add = function (num) {
+    if (typeof num === 'number') {
+        num = MPInteger.fromNumber(num);
+    }
+};
+
+exports.MPNaturalNumber = MPNaturalNumber;
 exports.MPInteger = MPInteger;
 });
 
@@ -2136,6 +2396,109 @@ function ifft(list, length) {
 
 exports.fft = fft;
 exports.ifft = ifft;
+});
+
+require.define("/dsp/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){function FastNumberTheoreticTransform(depth, mod, root, iroot) {
+    var n = this.length = 1 << depth, c, k, rev;
+    this.root = root;
+    this.mod = mod;
+    this.rootTable = {};
+    this.inverseRootTable = {};
+    for (var i = 0; i < depth; i++) {
+        this.rootTable[n >> i] = root;
+        this.inverseRootTable[n >> i] = iroot;
+        root *= root;
+        root %= mod;
+        iroot *= iroot;
+        iroot %= mod;
+    }
+    this.rootTable[1] = 1;
+    this.inverseRootTable[1] = 1;
+    this.reverseTable = FastNumberTheoreticTransform.reverseTable[n];
+    if (!this.reverseTable) {
+        FastNumberTheoreticTransform.reverseTable[n] = this.reverseTable = [];
+        for (i = 0; i < n; i++) {
+            c = n >> 1;
+            k = i;
+            rev = 0;
+            while (c) {
+                rev <<= 1;
+                rev |= k & 1;
+                c >>= 1;
+                k >>= 1;
+            }
+            this.reverseTable[i] = rev;
+        }
+    }
+    // Find smallest prime length * k + 1 > mod
+    // Using BLS test: http://www.math.dartmouth.edu/~carlp/PDF/110.pdf
+}
+
+FastNumberTheoreticTransform.reverseTable = {};
+
+FastNumberTheoreticTransform.prototype.forward = function (list) {
+    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
+    if (n == 1) {
+        list.push(0);
+        return list;
+    } else {
+        for (i = 0; i < n; i++) {
+            rev = reverseTable[i];
+            if (rev < i) {
+                a = list[i];
+                list[i] = list[rev];
+                list[rev] = a;
+            }
+        }
+        this.__fnttcore(list, this.rootTable);
+    }
+    return list;
+};
+
+FastNumberTheoreticTransform.prototype.backward = function (list) {
+    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
+    if (n == 1) {
+        list.push(0);
+        return list;
+    } else {
+        for (i = 0; i < n; i++) {
+            rev = reverseTable[i];
+            if (rev < i) {
+                a = list[i];
+                list[i] = list[rev];
+                list[rev] = a;
+            }
+        }
+        this.__fnttcore(list, this.inverseRootTable);
+        for (i = 0; i < n; i++) {
+            list /= n;
+        }
+    }
+    return list;
+};
+
+FastNumberTheoreticTransform.prototype.__fnttcore = function (list, rootTable) {
+    var n = this.length,
+        mod = this.mod,
+        i, m, k, om, o, t;
+    m = 1;
+    while (m < n) {
+        om = rootTable[m];
+        o = 1;
+        for (k = 0; k < m; k++) {
+            for (i = k; i < n; i += m << 1) {
+                t = o * list[i + m] % mod;
+                list[i + m] = list[i] - t;
+                list[i] += t;
+            }
+            o *= om;
+            o %= mod;
+        }
+        m = m << 1;
+    }
+};
+
+exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
 });
 
 require.define("/browser.js",function(require,module,exports,__dirname,__filename,process,global){global.fast = require("./fast.js");
