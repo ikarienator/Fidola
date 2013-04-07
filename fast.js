@@ -941,6 +941,12 @@ RedBlackTreeNode.prototype = {
      * @property {boolean} red
      */
     red: true,
+
+    /**
+     * @property {number} count Count of nodes of this subtree.
+     */
+    count: 1,
+
     data: null
 };
 
@@ -958,14 +964,6 @@ RedBlackTree.prototype = {
     root: null,
 
     length: 0,
-
-    /**
-     *
-     * @param {RedBlackTreeNode} newNode
-     * @param {RedBlackTreeNode} oldNode
-     */
-    beforeNodeSwap: function (newNode, oldNode) {
-    },
 
     /**
      * @returns {RedBlackTreeNode}
@@ -1038,15 +1036,11 @@ RedBlackTree.prototype = {
      * @param {RedBlackTreeNode} node
      */
     removeNode: function (node) {
-        var minNode;
         if (node) {
             if (node.right) {
-                minNode = this._nodeLeftMost(node.right);
-                this.swap(node, minNode);
-                this._nodeRemoveLeftMost(minNode);
-            } else {
-                this._nodeRemoveLeftMost(node);
+                this.swap(node, this._nodeLeftMost(node.right));
             }
+            this._nodeRemoveLeftMost(node);
             this.length--;
         }
     },
@@ -1057,10 +1051,58 @@ RedBlackTree.prototype = {
      * @param {RedBlackTreeNode} node2
      */
     swap: function (node1, node2) {
-        var data1 = node1.data, data2 = node2.data;
-        this.beforeNodeSwap(node1, node2);
-        node1.data = data2;
-        node2.data = data1;
+        var nodes = [node1.left, node2.left, node1.right, node2.right, node1.parent, node2.parent],
+            isLeft1 = node1.parent && node1.parent.left === node1,
+            isLeft2 = node2.parent && node2.parent.left === node2,
+            red1 = node1.red,
+            count1 = node1.count;
+        node1.red = node2.red;
+        node2.red = red1;
+        node1.count = node2.count;
+        node2.count = count1;
+        for (var i = 0; i < 6; i++) {
+            if (nodes[i] === node1) {
+                nodes[i] = node2;
+            } else if (nodes[i] === node2) {
+                nodes[i] = node1;
+            }
+        }
+        node2.left = nodes[0];
+        node1.left = nodes[1];
+        node2.right = nodes[2];
+        node1.right = nodes[3];
+        node2.parent = nodes[4];
+        node1.parent = nodes[5];
+        if (nodes[0]) {
+            nodes[0].parent = node2;
+        }
+        if (nodes[1]) {
+            nodes[1].parent = node1;
+        }
+        if (nodes[2]) {
+            nodes[2].parent = node2;
+        }
+        if (nodes[3]) {
+            nodes[3].parent = node1;
+        }
+        if (nodes[4]) {
+            if (isLeft1) {
+                nodes[4].left = node2;
+            } else {
+                nodes[4].right = node2;
+            }
+        } else {
+            this.root = node2;
+        }
+        if (nodes[5]) {
+            if (isLeft2) {
+                nodes[5].left = node1;
+            } else {
+                nodes[5].right = node1;
+            }
+        } else {
+            this.root = node1;
+        }
     },
 
     /**
@@ -1136,6 +1178,8 @@ RedBlackTree.prototype = {
          */
         var target = node.right;
         target.parent = node.parent;
+        target.count = node.count;
+        node.count -= target.right ? target.right.count + 1 : 1;
         if (node.parent) {
             if (node.parent.left == node) {
                 node.parent.left = target;
@@ -1165,6 +1209,8 @@ RedBlackTree.prototype = {
          */
         var target = node.left;
         target.parent = node.parent;
+        target.count = node.count;
+        node.count -= target.left ? target.left.count + 1 : 1;
         if (node.parent) {
             if (node.parent.right === node) {
                 node.parent.right = target;
@@ -1185,13 +1231,42 @@ RedBlackTree.prototype = {
     /**
      *
      * @param {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
+     */
+    prepend: function (node) {
+        return this.insertBefore(null, node)
+    },
+
+    /**
+     *
+     * @param {RedBlackTreeNode} node
+     * @returns {RedBlackTreeNode}
+     */
+    append: function (node) {
+        return this.insertBefore(null, node)
+    },
+
+    /**
+     *
+     * @param {RedBlackTreeNode} node
      * @param {RedBlackTreeNode} newNode
      * @returns {RedBlackTreeNode}
      */
     insertBefore: function (node, newNode) {
-        if (!node.left) {
+        if (this.length == 0) {
+            this.root = newNode;
+            this.length = 1;
+            return newNode;
+        } else if (!node) {
+            return this.insertAfter(this.last(), newNode);
+        } else if (!node.left) {
             node.left = newNode;
             newNode.parent = node;
+            var parent = node;
+            while (parent) {
+                parent.count++;
+                parent = parent.parent;
+            }
             this._nodeInsertFixUp(newNode);
             return newNode;
         } else {
@@ -1206,10 +1281,20 @@ RedBlackTree.prototype = {
      * @returns {RedBlackTreeNode}
      */
     insertAfter: function (node, newNode) {
-
-        if (!node.right) {
+        if (this.length == 0) {
+            this.root = newNode;
+            this.length = 1;
+            return newNode;
+        } else if (!node) {
+            return this.insertBefore(this.first(), newNode);
+        } else if (!node.right) {
             node.right = newNode;
             newNode.parent = node;
+            var parent = node;
+            while (parent) {
+                parent.count++;
+                parent = parent.parent;
+            }
             this._nodeInsertFixUp(newNode);
             return newNode;
         } else {
@@ -1258,6 +1343,8 @@ RedBlackTree.prototype = {
                     if ((p.right = node.left)) {
                         p.right.parent = p;
                     }
+                    node.count = p.count;
+                    p.count -= node.right ? node.right.count + 1 : 1;
                     node.left = p;
                     p.parent = node;
                     p = node;
@@ -1268,6 +1355,8 @@ RedBlackTree.prototype = {
                     if ((p.left = node.right)) {
                         p.left.parent = p;
                     }
+                    node.count = p.count;
+                    p.count -= node.left ? node.left.count + 1 : 1;
                     node.right = p;
                     p.parent = node;
                     p = node;
@@ -1399,6 +1488,11 @@ RedBlackTree.prototype = {
             this.root = child;
         }
 
+        var parent = node.parent;
+        while (parent) {
+            parent.count--;
+            parent = parent.parent;
+        }
         if (!node.red) {
             if (this._nodeIsRed(child)) {
                 child.red = false;
@@ -1574,7 +1668,6 @@ BinarySearchTree_prototype.remove = function (data) {
     }
 };
 
-exports = exports || {};
 exports.BinarySearchTree = BinarySearchTree;
 exports.RedBlackTree = RedBlackTree;
 });

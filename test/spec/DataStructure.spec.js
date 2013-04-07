@@ -1,7 +1,7 @@
 describe("Data Structure", function () {
     describe("Red-Black Tree", function () {
         var data = [],
-            seed = 1.5;
+            seed = 1.15;
 
         function random() {
             seed *= 124.21;
@@ -9,14 +9,14 @@ describe("Data Structure", function () {
             return seed;
         }
 
-        for (var i = 0; i < 400; i++) {
+        for (var i = 0; i < 20; i++) {
             data.push(random());
         }
         var sorted = data.slice(0).sort(function (a, b) {
             return a - b;
         });
 
-        function checkTopo(tree) {
+        window.checkTopo = function (tree) {
             var revision = Math.random();
 
             function testTopo(node, parent, collection) {
@@ -27,17 +27,23 @@ describe("Data Structure", function () {
                 if (node.parent != parent) {
                     expect(node.parent).to.be(parent);
                 }
+                var count = 1;
                 if (node.left) {
+                    count += node.left.count;
                     if (node.left.data > node.data) {
                         expect(node.left.data).not.to.greaterThan(node.data);
                     }
                     testTopo(node.left, node);
                 }
                 if (node.right) {
+                    count += node.right.count;
                     if (node.data > node.right.data) {
                         expect(node.data).not.to.greaterThan(node.right.data);
                     }
                     testTopo(node.right, node);
+                }
+                if (count != node.count) {
+                    expect(node.count).to.be(count);
                 }
             }
 
@@ -102,6 +108,7 @@ describe("Data Structure", function () {
         it("insert", function () {
             var rbTree = new fast.ds.BinarySearchTree(), node;
             for (var i = 0; i < data.length; i++) {
+                checkTopo(rbTree);
                 node = rbTree.insert(data[i]);
                 if (i % 30 == 0) {
                     if (node.data !== data[i]) {
@@ -109,7 +116,7 @@ describe("Data Structure", function () {
                     }
                 }
             }
-            checkTopo(rbTree.root);
+            checkTopo(rbTree);
             checkBlackCount(rbTree);
         });
 
@@ -271,29 +278,30 @@ describe("Data Structure", function () {
         });
 
         it("balance", function () {
-            var rbTree = new fast.ds.BinarySearchTree();
+            var rbTree = new fast.ds.BinarySearchTree(),
+                n = Math.min(data.length, 30);
             for (var i = 0; i < data.length; i++) {
                 rbTree.insert(data[i]);
             }
 
             expect(getDepth(rbTree)).to.lessThan(Math.ceil(Math.log(rbTree.length + 1) / Math.log(2) * 2));
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < n; i++) {
                 rbTree.remove(data[i]);
             }
             checkTopo(rbTree);
             checkBlackCount(rbTree);
 
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < n; i++) {
                 if (rbTree.search(data[i]) !== null) {
                     expect(rbTree.search(data[i])).to.be(null);
                 }
             }
 
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < n; i++) {
                 rbTree.insert(data[i]);
             }
 
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < n; i++) {
                 if (rbTree.search(data[i]) === null) {
                     expect(rbTree.search(data[i])).not.to.be(null);
                 }
