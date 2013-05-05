@@ -5,6 +5,7 @@ JS_BEAUTIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs -b -i 2 -nm -ns
 all: fast.js fast.min.js
 
 fast.js: Makefile\
+	lib/sequence/BinarySearch.js \
 	lib/sequence/KMP.js \
 	lib/sequence/LCS.js \
 	lib/sequence/LCStr.js \
@@ -14,6 +15,7 @@ fast.js: Makefile\
 	lib/datastructure/RedBlackTree.js \
 	lib/dsp/FFT.js \
 	lib/dsp/FNTT.js \
+	lib/nt/PrimalityTest.js \
 	lib/mp/BigInteger.js \
 	lib/browser.js \
 	lib/fast.js

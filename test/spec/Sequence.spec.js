@@ -202,5 +202,13 @@ describe("Sequence Algorithm", function () {
             b.push(0);
             expect(fast.seq.KMP(a, b)).to.equal(-1);
         });
+        it("Binary Search", function () {
+            var array = [];
+            for (var i = 0, j = 0; i < 1000; i++) {
+                j += (Math.random() * 30 >> 0) + 1;
+                array.push(j);
+            }
+            expect(fast.seq.binarySearch(array, array[55])).to.equal(55);
+        });
     });
 });

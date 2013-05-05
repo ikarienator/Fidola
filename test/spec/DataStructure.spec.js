@@ -16,7 +16,7 @@ describe("Data Structure", function () {
             return a - b;
         });
 
-        window.checkTopo = function (tree) {
+        function checkTopo(tree) {
             var revision = Math.random();
 
             function testTopo(node, parent, collection) {

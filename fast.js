@@ -398,6 +398,7 @@ function includes(module, exp) {
     }
 }
 var seq = fast.seq = {};
+includes(seq, require("./sequence/BinarySearch"));
 includes(seq, require("./sequence/KMP"));
 includes(seq, require("./sequence/LCS"));
 includes(seq, require("./sequence/LCStr"));
@@ -408,12 +409,59 @@ var ds = fast.ds = {};
 includes(ds, require("./datastructure/BinaryHeap.js"));
 includes(ds, require("./datastructure/RedBlackTree.js"));
 
+var nt = fast.nt = {};
+includes(nt, require("./nt/PrimalityTest.js"));
+
 var mp = fast.mp = {};
 includes(mp, require("./mp/BigInteger.js"));
 
 var dsp = fast.dsp = {};
 includes(dsp, require("./dsp/FFT.js"));
 includes(dsp, require("./dsp/FNTT.js"));
+});
+
+require.define("/sequence/BinarySearch.js",function(require,module,exports,__dirname,__filename,process,global){function binarySearch(sortedArray, needle) {
+    var lo = 0, hi = sortedArray.length;
+    while (lo + 1 < hi) {
+        var mid = (lo + hi) >> 1;
+        var el = sortedArray[mid];
+        if (el === needle) {
+            return mid;
+        } else if (el < needle) {
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+    if (sortedArray[lo] === needle) {
+        return lo;
+    }
+    return -1;
+}
+
+function binarySearchWithCompare(sortedArray, needle, compare) {
+    var lo = 0, hi = sortedArray.length;
+    while (lo + 1 < hi) {
+        var mid = (lo + hi) >> 1;
+        var el = sortedArray[mid];
+        var cmp = compare(el, needle);
+        if (cmp === 0) {
+            return mid;
+        }
+        if (cmp < 0) {
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+    if (compare(sortedArray[lo], needle) == 0) {
+        return lo;
+    }
+    return -1;
+}
+
+exports.binarySearch = binarySearch;
+exports.binarySearchWithCompare = binarySearchWithCompare;
 });
 
 require.define("/sequence/KMP.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -700,8 +748,8 @@ function longestCommonSubstringDP(a, b) {
     }).result.join('');
 }
 
-exports.LCStr = longestCommonSubarrayDP;
-exports.LCStrStr = longestCommonSubstringDP;
+exports.LCStr = exports.longestCommonSubarrayDP = longestCommonSubarrayDP;
+exports.LCStrStr = exports.longestCommonSubstringDP = longestCommonSubstringDP;
 });
 
 require.define("/sequence/LIS.js",function(require,module,exports,__dirname,__filename,process,global){function longestIncreasingSubsequence(array) {
@@ -743,13 +791,13 @@ require.define("/sequence/LIS.js",function(require,module,exports,__dirname,__fi
     return result;
 }
 
-exports.LIS = longestIncreasingSubsequence;
+exports.LIS = exports.longestIncreasingSubsequence = longestIncreasingSubsequence;
 });
 
 require.define("/sequence/Shuffle.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Randomly shuffle the array with.
  * @param {Array} array
- * @param {Function} [rng] Function generates number in (0, 1]
+ * @param {Function} [rng] Function generates number in [0, 1)
  */
 function shuffle(array, rng) {
     var i, n = array.length, pivot, temp;
@@ -1670,6 +1718,145 @@ BinarySearchTree_prototype.remove = function (data) {
 
 exports.BinarySearchTree = BinarySearchTree;
 exports.RedBlackTree = RedBlackTree;
+});
+
+require.define("/nt/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){function sqrMult(a, b, n) {
+    a |= 0;
+    b |= 0;
+    n |= 0;
+    a %= n;
+    b %= n;
+    if (n < 65536 || (4294967296 / a >= b)) {
+        return a * b % n;
+    }
+    var result = 0;
+    for (var r = 1; r <= b; r <<= 1) {
+        if (r & b) {
+            result += a;
+            result %= n;
+        }
+        a <<= 1;
+        a %= n;
+    }
+    return result;
+}
+
+function powerMod(a, b, n) {
+    // Optimization for compiler.
+    a |= 0;
+    b |= 0;
+    n |= 0;
+    if (n === 1) {
+        return 0;
+    }
+    if (b === 0) {
+        return 1;
+    }
+    if (a === 0) {
+        return 0;
+    }
+    if (a === 1) {
+        return 1;
+    }
+    var result = 1;
+    while (b) {
+        if (b & 1) {
+            result = sqrMult(result, a, n);
+        }
+        a = sqrMult(a, a, n);
+        b >>= 1;
+    }
+    return result;
+}
+
+function millerRabinPrimalityTest(a, s, d, n) {
+    var c = powerMod(a, d, n);
+    if (c === 1) {
+        return true;
+    }
+    for (var r = 0; r < s; r++) {
+        if (c === n - 1) {
+            return true;
+        }
+        c = sqrMult(c, c, n);
+        if (c == 1) {
+            return false;
+        }
+    }
+    return false;
+}
+
+var SMALL_PRIMES = null;
+
+function preparePrimes() {
+    SMALL_PRIMES = new Uint32Array(82025);
+    SMALL_PRIMES[0] = 2;
+    var index = 1;
+    var bitmap = new Uint32Array(32768);
+    for (var i = 3; i <= 1024; i += 2) {
+        if (0 == (bitmap[i >> 5] & (1 << (i & 31)))) {
+            SMALL_PRIMES[index++] = i;
+            for (var j = i * i | 0, i2 = i + i; j < 1048576; j += i2) {
+                bitmap[j >> 5] |= (1 << (j & 31));
+            }
+        }
+    }
+    for (; i < 1048576; i += 2) {
+        if (0 == (bitmap[i >> 5] & (1 << (i & 31)))) {
+            SMALL_PRIMES[index++] = i;
+        }
+    }
+    SMALL_PRIMES.indexOf = function (a) {
+        var lo = 0, hi = SMALL_PRIMES.length;
+        while (lo + 1 < hi) {
+            var mid = (lo + hi) >> 1;
+            if (this[mid] === a) {
+                return mid;
+            } else if (this[mid] < a) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        if (this[lo] == a) {
+            return lo;
+        }
+        return -1;
+    };
+}
+
+/**
+ *
+ * @param {Number} small_number
+ * @returns {Boolean}
+ */
+function primeQ(small_number) {
+    small_number = small_number | 0;
+    if (small_number <= 0) {
+        return false;
+    }
+    if (!SMALL_PRIMES) {
+        preparePrimes();
+    }
+    if (small_number < 1048576) {
+        return SMALL_PRIMES.indexOf(small_number) !== -1;
+    }
+    if ((small_number & 1) == 0) {
+        return false;
+    }
+    var d = (small_number - 1) >> 1;
+    var s = 1;
+    while ((d & 1) === 0) {
+        s++;
+        d >>= 1;
+    }
+    return millerRabinPrimalityTest(2, s, d, small_number) &&
+        millerRabinPrimalityTest(7, s, d, small_number) &&
+        millerRabinPrimalityTest(61, s, d, small_number);
+}
+
+
+exports.primeQ = primeQ;
 });
 
 require.define("/mp/BigInteger.js",function(require,module,exports,__dirname,__filename,process,global){/**
