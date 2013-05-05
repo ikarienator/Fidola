@@ -1,7 +1,10 @@
 #fast.js
-A simple, tested, ready-to-used javascript algorithm library for node.js and browser.
 
 [![Build Status](https://travis-ci.org/ikarienator/fast.js.png?branch=master)](https://travis-ci.org/ikarienator/fast.js)
+
+A simple, tested, ready-to-used javascript algorithm library for node.js and browser.
+
+
 
 ## Wish List
 
