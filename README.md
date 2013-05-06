@@ -22,6 +22,7 @@ This project is current under development.
 
 ### Numeric Algorithms
 - FFT
+- Cubic Polynomial Solver
 
 ### Simple Number Theory Algorithms
 - Primality Test
@@ -63,7 +64,6 @@ This project is current under development.
 ### Numeric Algorithms
 - Numeric Derivative
 - Numeric Integral
-- Cubic Polynomial Solver
 - Polynomial Evaluation
 
 ### Simple Number Theory Algorithms
