@@ -18,7 +18,6 @@ fast.js: Makefile\
 	lib/nt/Basics.js \
 	lib/nt/PrimalityTest.js \
 	lib/nt/FNTT.js \
-	lib/mp/BigInteger.js \
 	lib/browser.js \
 	lib/fast.js
 	@rm -f $@
