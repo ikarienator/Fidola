@@ -2,18 +2,31 @@
 
 [![Build Status](https://travis-ci.org/ikarienator/fast.js.png?branch=master)](https://travis-ci.org/ikarienator/fast.js)
 
-A simple, tested, ready-to-used javascript algorithm library for node.js and browser.
+A simple, tested javascript algorithm library for node.js and browser.
+This project is current under development.
 
-
+## Current Progress
+### General Algorithms
+- Sequence Algorithms
+    - Longest Increasing Subsequence
+    - Longest Common Substring using DP(O(n^2))
+    - Longest Common Subsequence using DP(O(n^2))
+    - KMP Matching
+### General Data Structures
+- Ordered Dictionaries
+    - Red-Black Tree
+- Heaps
+    - Binary Heap
+- Disjoint Set
+### Numeric Algorithms
+- FFT
+### Simple Number Theory Algorithms
+- Primality Test
+- Greatest Common Divisor
 
 ## Wish List
 
 ### General Algorithms
-- Sequence Algorithms
-    - Longest Increasing Subsequence. _Finished_
-    - Longest Common Substring using DP(O(n^2)). _Finished_
-    - Longest Common Subsequence using DP(O(n^2)). _Finished_
-    - KMP Matching. _Finished_
 - Sort and Select algorithms
     - Compare based stable sort algorithm
     - [In-place merge sort](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.22.5514&rep=rep1&type=pdf) 
@@ -27,15 +40,12 @@ A simple, tested, ready-to-used javascript algorithm library for node.js and bro
 - Linked List(Singly and Doubly)
 - Ordered Dictionaries
     - Unbalanced BST
-    - Red-Black Tree _Finished_
     - Splay Tree
     - AVL Tree
     - Skip List
     - Van Emde Boas Tree
 - Heaps
-    - Binary Heap _Finished_
     - Cartesian Tree
-- Disjoint Set
 - Young Tableau
 
 ### Graph Theory
@@ -51,14 +61,12 @@ A simple, tested, ready-to-used javascript algorithm library for node.js and bro
 - Numeric Derivative
 - Numeric Integral
 - Cubic Polynomial Solver
-- FFT _Finished_
 - Polynomial Evaluation
 
 ### Simple Number Theory Algorithms
-- Primality Test
 - Small Number Factoring
-- Greatest Common Divisor / Extended GCD
 - Big Integer Arithmetics
+- Extended GCD
 - Continued Fraction / Diophantine approximation
 - Pell's equation
 - CRT Recovery
