@@ -408,17 +408,18 @@ includes(seq, require("./sequence/Shuffle"));
 var ds = fast.ds = {};
 includes(ds, require("./datastructure/BinaryHeap.js"));
 includes(ds, require("./datastructure/RedBlackTree.js"));
+includes(ds, require("./datastructure/BinarySearchTree.js"));
 
 var nt = fast.nt = {};
 includes(nt, require("./nt/Basics.js"));
 includes(nt, require("./nt/PrimalityTest.js"));
+includes(nt, require("./nt/FNTT.js"));
 
 var mp = fast.mp = {};
 includes(mp, require("./mp/BigInteger.js"));
 
 var dsp = fast.dsp = {};
 includes(dsp, require("./dsp/FFT.js"));
-includes(dsp, require("./dsp/FNTT.js"));
 });
 
 require.define("/sequence/BinarySearch.js",function(require,module,exports,__dirname,__filename,process,global){function binarySearch(sortedArray, needle) {
@@ -798,7 +799,7 @@ exports.LIS = exports.longestIncreasingSubsequence = longestIncreasingSubsequenc
 require.define("/sequence/Shuffle.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Randomly shuffle the array with.
  * @param {Array} array
- * @param {Function} [rng] Function generates number in [0, 1)
+ * @param {Function} [rng] Function generates number in [0, 1
  */
 function shuffle(array, rng) {
     var i, n = array.length, pivot, temp;
@@ -806,7 +807,7 @@ function shuffle(array, rng) {
         rng = Math.random;
     }
     for (i = n - 2; i > 0; i--) {
-        pivot = rng() * (i + 1);
+        pivot = rng() * (i + 1) >> 0;
         if (pivot >= i) {
             continue;
         }
@@ -996,7 +997,31 @@ RedBlackTreeNode.prototype = {
      */
     count: 1,
 
-    data: null
+    data: null,
+
+    /**
+     * Get the left most node in the subtree.
+     * @returns {RedBlackTreeNode}
+     */
+    leftMost: function () {
+        var node = this;
+        while (node.left) {
+            node = node.left;
+        }
+        return node;
+    },
+
+    /**
+     * Get the right most node in the subtree.
+     * @returns {RedBlackTreeNode}
+     */
+    rightMost: function () {
+        var node = this;
+        while (node.right) {
+            node = node.right;
+        }
+        return node;
+    }
 };
 
 /**
@@ -1009,6 +1034,8 @@ function RedBlackTree() {
     this.root = null;
 }
 
+RedBlackTree.NODE_TYPE = RedBlackTreeNode;
+
 RedBlackTree.prototype = {
     root: null,
 
@@ -1018,7 +1045,7 @@ RedBlackTree.prototype = {
      * @returns {RedBlackTreeNode}
      */
     first: function () {
-        return this._nodeLeftMost(this.root);
+        return this.root && this.root.leftMost();
     },
 
     /**
@@ -1026,7 +1053,7 @@ RedBlackTree.prototype = {
      * @returns {RedBlackTreeNode}
      */
     last: function () {
-        return this._nodeRightMost(this.root);
+        return this.root && this.root.rightMost();
     },
 
     /**
@@ -1036,7 +1063,7 @@ RedBlackTree.prototype = {
      */
     next: function (node) {
         if (node.right) {
-            return this._nodeLeftMost(node.right);
+            return node.right.leftMost();
         } else if (node.parent) {
             var curr = node;
             while (curr.parent && curr.parent.left !== curr) {
@@ -1056,7 +1083,7 @@ RedBlackTree.prototype = {
      */
     prev: function (node) {
         if (node.left) {
-            return this._nodeRightMost(node.left);
+            return node.left.rightMost();
         } else if (node.parent) {
             var curr = node;
             while (curr.parent && curr.parent.right !== curr) {
@@ -1086,8 +1113,8 @@ RedBlackTree.prototype = {
      */
     removeNode: function (node) {
         if (node) {
-            if (node.right) {
-                this.swap(node, this._nodeLeftMost(node.right));
+            if (node.left && node.right) {
+                this.swap(node, node.right.leftMost());
             }
             this._nodeRemoveLeftMost(node);
             this.length--;
@@ -1152,32 +1179,6 @@ RedBlackTree.prototype = {
         } else {
             this.root = node1;
         }
-    },
-
-    /**
-     *
-     * @param {RedBlackTreeNode} node
-     * @returns {RedBlackTreeNode}
-     * @private
-     */
-    _nodeLeftMost: function (node) {
-        while (node && node.left) {
-            node = node.left;
-        }
-        return node;
-    },
-
-    /**
-     *
-     * @param {RedBlackTreeNode} node
-     * @returns {RedBlackTreeNode}
-     * @private
-     */
-    _nodeRightMost: function (node) {
-        while (node && node.right) {
-            node = node.right;
-        }
-        return node;
     },
 
     /**
@@ -1283,7 +1284,7 @@ RedBlackTree.prototype = {
      * @returns {RedBlackTreeNode}
      */
     prepend: function (node) {
-        return this.insertBefore(null, node)
+        return this.insertAfter(null, node)
     },
 
     /**
@@ -1305,6 +1306,7 @@ RedBlackTree.prototype = {
         if (this.length == 0) {
             this.root = newNode;
             this.length = 1;
+            newNode.red = false;
             return newNode;
         } else if (!node) {
             return this.insertAfter(this.last(), newNode);
@@ -1319,7 +1321,7 @@ RedBlackTree.prototype = {
             this._nodeInsertFixUp(newNode);
             return newNode;
         } else {
-            return this.insertAfter(this._nodeRightMost(node.left), newNode);
+            return this.insertAfter(node.left && node.left.rightMost(), newNode);
         }
     },
 
@@ -1333,6 +1335,7 @@ RedBlackTree.prototype = {
         if (this.length == 0) {
             this.root = newNode;
             this.length = 1;
+            newNode.red = false;
             return newNode;
         } else if (!node) {
             return this.insertBefore(this.first(), newNode);
@@ -1347,7 +1350,7 @@ RedBlackTree.prototype = {
             this._nodeInsertFixUp(newNode);
             return newNode;
         } else {
-            return this.insertBefore(this._nodeLeftMost(node.right), newNode);
+            return this.insertBefore(node.right && node.right.leftMost(), newNode);
         }
     },
 
@@ -1432,60 +1435,62 @@ RedBlackTree.prototype = {
      * @private
      */
     _nodeRemoveFixUp: function (node, parent, sibling) {
-        if (parent !== null) {
-            // Case 2
-            // sibling's black rank is 1 more than node's.
-            // Always have a parent
-            // Always have a sibling
-            // Not always have the node.
-            if (this._nodeIsRed(sibling)) {
-                parent.red = true;
-                sibling.red = false;
-                if (node === parent.left) {
-                    this._nodeRotateLeft(parent);
-                    sibling = parent.right;
-                } else {
-                    this._nodeRotateRight(parent);
-                    sibling = parent.left;
-                }
+        if (parent === null) {
+            return;
+        }
+
+        // Case 2
+        // sibling's black rank is 1 more than node's.
+        // Always have a parent
+        // Always have a sibling
+        // Not always have the node.
+        if (this._nodeIsRed(sibling)) {
+            parent.red = true;
+            sibling.red = false;
+            if (node === parent.left) {
+                this._nodeRotateLeft(parent);
+                sibling = parent.right;
+            } else {
+                this._nodeRotateRight(parent);
+                sibling = parent.left;
+            }
+        }
+
+        // Now sibling is black
+        if (!this._nodeIsRed(sibling.left) && !this._nodeIsRed(sibling.right)) {
+            sibling.red = true;
+            if (!this._nodeIsRed(parent)) {
+                // Case 3
+                this._nodeRemoveFixUp(parent, parent.parent, this._nodeSibling(parent));
+            } else {
+                // Case 4
+                parent.red = false;
+            }
+        } else {
+            // Case 5
+            if (node === parent.left && !this._nodeIsRed(sibling.right) && this._nodeIsRed(sibling.left)) {
+                sibling.red = true;
+                sibling.left.red = false;
+                this._nodeRotateRight(sibling);
+                sibling = sibling.parent;
+            } else if (node === parent.right && !this._nodeIsRed(sibling.left) && this._nodeIsRed(sibling.right)) {
+                sibling.red = true;
+                sibling.right.red = false;
+                this._nodeRotateLeft(sibling);
+                sibling = sibling.parent;
             }
 
-            // Now sibling is black
-            if (!this._nodeIsRed(sibling.left) && !this._nodeIsRed(sibling.right)) {
-                sibling.red = true;
-                if (!this._nodeIsRed(parent)) {
-                    // Case 3
-                    this._nodeRemoveFixUp(parent, parent.parent, this._nodeSibling(parent));
-                } else {
-                    // Case 4
-                    parent.red = false;
-                }
+            // Case 6
+            // Now sibling's far child is red.
+            // node, sibling, sibling's near child are black.
+            sibling.red = parent.red;
+            parent.red = false;
+            if (node === parent.left) {
+                this._nodeRotateLeft(parent);
+                sibling.right.red = false;
             } else {
-                // Case 5
-                if (node === parent.left && !this._nodeIsRed(sibling.right) && this._nodeIsRed(sibling.left)) {
-                    sibling.red = true;
-                    sibling.left.red = false;
-                    this._nodeRotateRight(sibling);
-                    sibling = sibling.parent;
-                } else if (node === parent.right && !this._nodeIsRed(sibling.left) && this._nodeIsRed(sibling.right)) {
-                    sibling.red = true;
-                    sibling.right.red = false;
-                    this._nodeRotateLeft(sibling);
-                    sibling = sibling.parent;
-                }
-
-                // Case 6
-                // Now sibling's far child is red.
-                // node, sibling, sibling's near child are black.
-                sibling.red = parent.red;
-                parent.red = false;
-                if (node === parent.left) {
-                    this._nodeRotateLeft(parent);
-                    sibling.right.red = false;
-                } else {
-                    this._nodeRotateRight(parent);
-                    sibling.left.red = false;
-                }
+                this._nodeRotateRight(parent);
+                sibling.left.red = false;
             }
         }
     },
@@ -1554,6 +1559,13 @@ RedBlackTree.prototype = {
     }
 };
 
+exports.RedBlackTreeNode = RedBlackTreeNode;
+exports.RedBlackTree = RedBlackTree;
+});
+
+require.define("/datastructure/BinarySearchTree.js",function(require,module,exports,__dirname,__filename,process,global){var fast = require('../fast'),
+    RedBlackTree = fast.ds.RedBlackTree,
+    RedBlackTreeNode = RedBlackTree.NODE_TYPE;
 /**
  * @class
  * @extends RedBlackTree
@@ -1718,7 +1730,6 @@ BinarySearchTree_prototype.remove = function (data) {
 };
 
 exports.BinarySearchTree = BinarySearchTree;
-exports.RedBlackTree = RedBlackTree;
 });
 
 require.define("/nt/Basics.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -1855,7 +1866,16 @@ exports.powerMod = powerMod;
 exports.multMod = multMod;
 });
 
-require.define("/nt/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){function millerRabinPrimalityTest(a, s, d, n) {
+require.define("/nt/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ * Miller-Rabin Primality Test with base a, odd index d and modular n,
+ * and n = 2^s * d.
+ * @param a
+ * @param s
+ * @param d
+ * @param n
+ * @returns {boolean}
+ */
+function millerRabinPrimalityTest(a, s, d, n) {
     var c = fast.nt.powerMod(a, d, n);
     if (c === 1) {
         return true;
@@ -1932,6 +1952,113 @@ function primeQ(small_number) {
 
 
 exports.primeQ = primeQ;
+});
+
+require.define("/nt/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ *
+ * @param depth
+ * @param mod
+ * @param root
+ * @param iroot
+ * @constructor
+ */
+function FastNumberTheoreticTransform(depth, mod, root, iroot) {
+    var n = this.length = 1 << depth, c, k, rev;
+    this.root = root;
+    this.mod = mod;
+    this.rootTable = {};
+    this.inverseRootTable = {};
+    for (var i = 0; i < depth; i++) {
+        this.rootTable[n >> i + 1] = root;
+        this.inverseRootTable[n >> i + 1] = iroot;
+        root *= root;
+        root %= mod;
+        iroot *= iroot;
+        iroot %= mod;
+    }
+    this.rootTable[1] = 1;
+    this.inverseRootTable[1] = 1;
+    this.reverseTable = FastNumberTheoreticTransform.reverseTable[n];
+    if (!this.reverseTable) {
+        FastNumberTheoreticTransform.reverseTable[n] = this.reverseTable = [];
+        for (i = 0; i < n; i++) {
+            c = n >> 1;
+            k = i;
+            rev = 0;
+            while (c) {
+                rev <<= 1;
+                rev |= k & 1;
+                c >>= 1;
+                k >>= 1;
+            }
+            this.reverseTable[i] = rev;
+        }
+    }
+    // Find smallest prime length * k + 1 > mod
+    // Using BLS test: http://www.math.dartmouth.edu/~carlp/PDF/110.pdf
+}
+
+FastNumberTheoreticTransform.reverseTable = {};
+
+FastNumberTheoreticTransform.prototype.forward = function (list) {
+    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
+    for (i = 0; i < n; i++) {
+        rev = reverseTable[i];
+        if (rev < i) {
+            a = list[i];
+            list[i] = list[rev];
+            list[rev] = a;
+        }
+    }
+    this.__fnttcore(list, this.rootTable);
+    return list;
+};
+
+FastNumberTheoreticTransform.prototype.backward = function (list) {
+    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
+    for (i = 0; i < n; i++) {
+        rev = reverseTable[i];
+        if (rev < i) {
+            a = list[i];
+            list[i] = list[rev];
+            list[rev] = a;
+        }
+    }
+    this.__fnttcore(list, this.inverseRootTable);
+    for (i = 0; i < n; i++) {
+        list[i] *= 253;
+        list[i] %= this.mod;
+    }
+    return list;
+};
+
+FastNumberTheoreticTransform.prototype.__fnttcore = function (list, rootTable) {
+    var n = this.length,
+        mod = this.mod,
+        i, m, k, om, o, t;
+    m = 1;
+    while (m < n) {
+        om = rootTable[m];
+        o = 1;
+        for (k = 0; k < m; k++) {
+            for (i = k; i < n; i += m << 1) {
+                t = o * list[i + m];
+                list[i + m] = list[i] - t;
+                list[i] += t;
+            }
+            o *= om;
+            o %= mod;
+        }
+        m = m << 1;
+    }
+    for (i = 0; i < n; i++) {
+        list[i] %= mod;
+        list[i] += mod;
+        list[i] %= mod;
+    }
+};
+
+exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
 });
 
 require.define("/mp/BigInteger.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -2746,117 +2873,6 @@ function ifft(list, length) {
 
 exports.fft = fft;
 exports.ifft = ifft;
-});
-
-require.define("/dsp/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){/**
- *
- * @param depth
- * @param mod
- * @param root
- * @param iroot
- * @constructor
- */
-function FastNumberTheoreticTransform(depth, mod, root, iroot) {
-    var n = this.length = 1 << depth, c, k, rev;
-    this.root = root;
-    this.mod = mod;
-    this.rootTable = {};
-    this.inverseRootTable = {};
-    for (var i = 0; i < depth; i++) {
-        this.rootTable[n >> i] = root;
-        this.inverseRootTable[n >> i] = iroot;
-        root *= root;
-        root %= mod;
-        iroot *= iroot;
-        iroot %= mod;
-    }
-    this.rootTable[1] = 1;
-    this.inverseRootTable[1] = 1;
-    this.reverseTable = FastNumberTheoreticTransform.reverseTable[n];
-    if (!this.reverseTable) {
-        FastNumberTheoreticTransform.reverseTable[n] = this.reverseTable = [];
-        for (i = 0; i < n; i++) {
-            c = n >> 1;
-            k = i;
-            rev = 0;
-            while (c) {
-                rev <<= 1;
-                rev |= k & 1;
-                c >>= 1;
-                k >>= 1;
-            }
-            this.reverseTable[i] = rev;
-        }
-    }
-    // Find smallest prime length * k + 1 > mod
-    // Using BLS test: http://www.math.dartmouth.edu/~carlp/PDF/110.pdf
-}
-
-FastNumberTheoreticTransform.reverseTable = {};
-
-FastNumberTheoreticTransform.prototype.forward = function (list) {
-    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-    if (n == 1) {
-        list.push(0);
-        return list;
-    } else {
-        for (i = 0; i < n; i++) {
-            rev = reverseTable[i];
-            if (rev < i) {
-                a = list[i];
-                list[i] = list[rev];
-                list[rev] = a;
-            }
-        }
-        this.__fnttcore(list, this.rootTable);
-    }
-    return list;
-};
-
-FastNumberTheoreticTransform.prototype.backward = function (list) {
-    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-    if (n == 1) {
-        list.push(0);
-        return list;
-    } else {
-        for (i = 0; i < n; i++) {
-            rev = reverseTable[i];
-            if (rev < i) {
-                a = list[i];
-                list[i] = list[rev];
-                list[rev] = a;
-            }
-        }
-        this.__fnttcore(list, this.inverseRootTable);
-        for (i = 0; i < n; i++) {
-            list[i] /= n;
-        }
-    }
-    return list;
-};
-
-FastNumberTheoreticTransform.prototype.__fnttcore = function (list, rootTable) {
-    var n = this.length,
-        mod = this.mod,
-        i, m, k, om, o, t;
-    m = 1;
-    while (m < n) {
-        om = rootTable[m];
-        o = 1;
-        for (k = 0; k < m; k++) {
-            for (i = k; i < n; i += m << 1) {
-                t = o * list[i + m] % mod;
-                list[i + m] = list[i] - t;
-                list[i] += t;
-            }
-            o *= om;
-            o %= mod;
-        }
-        m = m << 1;
-    }
-};
-
-exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
 });
 
 require.define("/browser.js",function(require,module,exports,__dirname,__filename,process,global){global.fast = require("./fast.js");

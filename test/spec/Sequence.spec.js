@@ -209,6 +209,15 @@ describe("Sequence Algorithm", function () {
                 array.push(j);
             }
             expect(fast.seq.binarySearch(array, array[55])).to.equal(55);
+            expect(fast.seq.binarySearchWithCompare(array, array[55], function (a, b) {
+                return a - b;
+            })).to.equal(55);
+            expect(fast.seq.binarySearchWithCompare(array, array[0], function (a, b) {
+                return a - b;
+            })).to.equal(0);
+            expect(fast.seq.binarySearchWithCompare(array, array[55] + 0.5, function (a, b) {
+                return a - b;
+            })).to.equal(-1);
         });
     });
 });

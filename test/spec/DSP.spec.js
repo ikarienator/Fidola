@@ -80,20 +80,4 @@ describe("Digital Signal Processing", function () {
             }
         });
     });
-
-    describe("FNTT", function () {
-        it("Load", function () {
-            expect(fast.dsp.FastNumberTheoreticTransform).not.to.eql(undefined);
-            new fast.dsp.FastNumberTheoreticTransform(6, 257, 81, 165);
-        });
-        it("Forward", function () {
-            var fntt = new fast.dsp.FastNumberTheoreticTransform(6, 257, 81, 165);
-            var data = [191, 58, 178, 59, 112, 51, 190, 55, 51, 186, 182, 56, 50, 111, 112, 177, 242, 190, 192,
-                126, 111, 244, 50, 64, 123, 124, 246, 115, 117, 182, 245, 185, 248, 192, 242, 244, 64, 57, 241,
-                245, 58, 122, 52, 115, 127, 184, 49, 112, 181, 126, 179, 183, 177, 54, 119, 118, 59, 119, 251,
-                114, 60, 189, 175, 48];
-            var dataf = fntt.backward(fntt.forward(data));
-            console.log(dataf);
-        });
-    });
 });
