@@ -799,11 +799,15 @@ exports.LIS = exports.longestIncreasingSubsequence = longestIncreasingSubsequenc
 require.define("/sequence/Shuffle.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Randomly shuffle the array with.
  * @param {Array} array
+ * @param {Function} [rng] Function generates number in [0, 1
  */
-function shuffle(array) {
+function shuffle(array, rng) {
     var i, n = array.length, pivot, temp;
+    if (!rng) {
+        rng = Math.random;
+    }
     for (i = n - 2; i > 0; i--) {
-        pivot = Math.random() * (i + 1);
+        pivot = rng() * (i + 1) >> 0;
         if (pivot >= i) {
             continue;
         }
@@ -1109,7 +1113,7 @@ RedBlackTree.prototype = {
      */
     removeNode: function (node) {
         if (node) {
-            if (node.right) {
+            if (node.left && node.right) {
                 this.swap(node, node.right.leftMost());
             }
             this._nodeRemoveLeftMost(node);
@@ -1431,60 +1435,62 @@ RedBlackTree.prototype = {
      * @private
      */
     _nodeRemoveFixUp: function (node, parent, sibling) {
-        if (parent !== null) {
-            // Case 2
-            // sibling's black rank is 1 more than node's.
-            // Always have a parent
-            // Always have a sibling
-            // Not always have the node.
-            if (this._nodeIsRed(sibling)) {
-                parent.red = true;
-                sibling.red = false;
-                if (node === parent.left) {
-                    this._nodeRotateLeft(parent);
-                    sibling = parent.right;
-                } else {
-                    this._nodeRotateRight(parent);
-                    sibling = parent.left;
-                }
+        if (parent === null) {
+            return;
+        }
+
+        // Case 2
+        // sibling's black rank is 1 more than node's.
+        // Always have a parent
+        // Always have a sibling
+        // Not always have the node.
+        if (this._nodeIsRed(sibling)) {
+            parent.red = true;
+            sibling.red = false;
+            if (node === parent.left) {
+                this._nodeRotateLeft(parent);
+                sibling = parent.right;
+            } else {
+                this._nodeRotateRight(parent);
+                sibling = parent.left;
+            }
+        }
+
+        // Now sibling is black
+        if (!this._nodeIsRed(sibling.left) && !this._nodeIsRed(sibling.right)) {
+            sibling.red = true;
+            if (!this._nodeIsRed(parent)) {
+                // Case 3
+                this._nodeRemoveFixUp(parent, parent.parent, this._nodeSibling(parent));
+            } else {
+                // Case 4
+                parent.red = false;
+            }
+        } else {
+            // Case 5
+            if (node === parent.left && !this._nodeIsRed(sibling.right) && this._nodeIsRed(sibling.left)) {
+                sibling.red = true;
+                sibling.left.red = false;
+                this._nodeRotateRight(sibling);
+                sibling = sibling.parent;
+            } else if (node === parent.right && !this._nodeIsRed(sibling.left) && this._nodeIsRed(sibling.right)) {
+                sibling.red = true;
+                sibling.right.red = false;
+                this._nodeRotateLeft(sibling);
+                sibling = sibling.parent;
             }
 
-            // Now sibling is black
-            if (!this._nodeIsRed(sibling.left) && !this._nodeIsRed(sibling.right)) {
-                sibling.red = true;
-                if (!this._nodeIsRed(parent)) {
-                    // Case 3
-                    this._nodeRemoveFixUp(parent, parent.parent, this._nodeSibling(parent));
-                } else {
-                    // Case 4
-                    parent.red = false;
-                }
+            // Case 6
+            // Now sibling's far child is red.
+            // node, sibling, sibling's near child are black.
+            sibling.red = parent.red;
+            parent.red = false;
+            if (node === parent.left) {
+                this._nodeRotateLeft(parent);
+                sibling.right.red = false;
             } else {
-                // Case 5
-                if (node === parent.left && !this._nodeIsRed(sibling.right) && this._nodeIsRed(sibling.left)) {
-                    sibling.red = true;
-                    sibling.left.red = false;
-                    this._nodeRotateRight(sibling);
-                    sibling = sibling.parent;
-                } else if (node === parent.right && !this._nodeIsRed(sibling.left) && this._nodeIsRed(sibling.right)) {
-                    sibling.red = true;
-                    sibling.right.red = false;
-                    this._nodeRotateLeft(sibling);
-                    sibling = sibling.parent;
-                }
-
-                // Case 6
-                // Now sibling's far child is red.
-                // node, sibling, sibling's near child are black.
-                sibling.red = parent.red;
-                parent.red = false;
-                if (node === parent.left) {
-                    this._nodeRotateLeft(parent);
-                    sibling.right.red = false;
-                } else {
-                    this._nodeRotateRight(parent);
-                    sibling.left.red = false;
-                }
+                this._nodeRotateRight(parent);
+                sibling.left.red = false;
             }
         }
     },

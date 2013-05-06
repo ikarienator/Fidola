@@ -24,20 +24,29 @@ describe("Data Structure", function () {
             var Node = fast.ds.RedBlackTreeNode,
                 rbTree = new fast.ds.RedBlackTree(),
                 root = new Node(0),
-                left = new Node(1),
-                left_right = new Node(2),
-                right = new Node(3),
-                right_left = new Node(4);
-            expect(rbTree.append(root)).to.be(root);
-            expect(rbTree.insertBefore(root, left)).to.be(left);
-            expect(rbTree.insertAfter(root, right)).to.be(right);
-            expect(rbTree.insertBefore(root, left_right)).to.be(left_right);
-            expect(rbTree.insertAfter(root, right_left)).to.be(right_left);
-            rbTree.removeNode(left);
-            expect(root.left).to.be(left_right);
-            expect(root.right).to.be(right);
-            expect(right.left).to.be(right_left);
-            expect(right.right).to.be(null);
+                nodes = [root];
+
+            function ib(node) {
+                nodes.push(rbTree.insertBefore(node, new Node(nodes.length)));
+            }
+
+            function ia(node, newNode) {
+                nodes.push(rbTree.insertAfter(node, new Node(nodes.length)));
+            }
+
+            rbTree.append(root);
+            ib(root); // 1
+            ia(root); // 2
+            ib(root); // 3
+            ia(root); // 4
+            rbTree.removeNode(null); // Test invalid argument
+            rbTree.removeNode(nodes[3]);
+            expect(root.left).to.be(nodes[1]);
+            expect(root.right).to.be(nodes[2]);
+            expect(nodes[1].left).to.be(null);
+            expect(nodes[1].right).to.be(null);
+            expect(nodes[2].left).to.be(nodes[4]);
+            expect(nodes[2].right).to.be(null);
         });
         it("Swap", function () {
             var Node = fast.ds.RedBlackTreeNode,
@@ -84,17 +93,18 @@ describe("Data Structure", function () {
     });
     describe("Binary Search Tree", function () {
         var data = [],
-            seed = 1.15;
+            seed = 1.17;
 
         function random() {
-            seed *= 124.21;
+            seed *= 12.52;
             seed -= Math.floor(seed);
             return seed;
         }
 
-        for (var i = 0; i < 20; i++) {
-            data.push(random());
+        for (var i = 0; i < 40; i++) {
+            data.push(i);
         }
+        fast.seq.shuffle(data, random);
         var sorted = data.slice(0).sort(function (a, b) {
             return a - b;
         });
@@ -133,6 +143,7 @@ describe("Data Structure", function () {
             if (tree.root) {
                 testTopo(tree.root, null);
             }
+            checkBlackCount(tree);
         }
 
         function checkBlackCount(tree) {
@@ -347,16 +358,19 @@ describe("Data Structure", function () {
             for (var i = 0; i < data.length; i++) {
                 bst.insert(data[i]);
                 index[i] = i;
+                checkTopo(bst);
             }
 
             fast.seq.shuffle(index);
 
             for (i = 0; i < data.length / 2; i++) {
                 bst.remove(data[index[i]]);
+                checkTopo(bst);
             }
             checkTopo(bst);
             for (; i < data.length; i++) {
                 bst.remove(data[index[i]]);
+                checkTopo(bst);
             }
         });
 
@@ -365,11 +379,13 @@ describe("Data Structure", function () {
                 n = Math.min(data.length, 30);
             for (var i = 0; i < data.length; i++) {
                 bst.insert(data[i]);
+                checkTopo(bst);
             }
 
             expect(getDepth(bst)).to.lessThan(Math.ceil(Math.log(bst.length + 1) / Math.log(2) * 2));
             for (var i = 0; i < n; i++) {
                 bst.remove(data[i]);
+                checkTopo(bst);
             }
             checkTopo(bst);
             checkBlackCount(bst);
@@ -382,6 +398,7 @@ describe("Data Structure", function () {
 
             for (var i = 0; i < n; i++) {
                 bst.insert(data[i]);
+                checkTopo(bst);
             }
 
             for (var i = 0; i < n; i++) {
