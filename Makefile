@@ -15,6 +15,7 @@ fast.js: Makefile\
 	lib/datastructure/RedBlackTree.js \
 	lib/dsp/FFT.js \
 	lib/dsp/FNTT.js \
+	lib/nt/Basics.js \
 	lib/nt/PrimalityTest.js \
 	lib/mp/BigInteger.js \
 	lib/browser.js \

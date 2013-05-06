@@ -37,6 +37,8 @@ describe("Digital Signal Processing", function () {
 
     describe("FFT", function () {
         it("Small fft", function () {
+            expect(fft([1])).to.eql([1, 0]);
+            expect(fft([1], 4)).to.eql([1, 0, 1, 0, 1, 0, 1, 0]);
             var data = [10, 20, 30, 40];
             expect(fft(data)).to.eql([100, 0, -20, 20, -20, 0, -20, -20]);
 
@@ -50,8 +52,11 @@ describe("Digital Signal Processing", function () {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0 ]);
         });
         it("Small ifft", function () {
+            expect(ifft([1, 0])).to.eql([1]);
+            expect(ifft([1, 0], 4)).to.eql([0.5, 0.5]);
             var data = [100, 0, -20, 20, -20, 0, -20, -20];
             expect(ifft(data)).to.eql([10, 20, 30, 40]);
+            expect(fft(data)).to.eql([100, 0, -20, 20, -20, 0, -20, -20]);
         });
         it("Huge fft (64k elements)", function () {
             var data = [], i, len = 65536, amp = 32, amp2 = 18, freq = 32, freq2 = 37, diff, esp = 1e-5;
@@ -73,6 +78,22 @@ describe("Digital Signal Processing", function () {
                     break;
                 }
             }
+        });
+    });
+
+    describe("FNTT", function () {
+        it("Load", function () {
+            expect(fast.dsp.FastNumberTheoreticTransform).not.to.eql(undefined);
+            new fast.dsp.FastNumberTheoreticTransform(6, 257, 81, 165);
+        });
+        it("Forward", function () {
+            var fntt = new fast.dsp.FastNumberTheoreticTransform(6, 257, 81, 165);
+            var data = [191, 58, 178, 59, 112, 51, 190, 55, 51, 186, 182, 56, 50, 111, 112, 177, 242, 190, 192,
+                126, 111, 244, 50, 64, 123, 124, 246, 115, 117, 182, 245, 185, 248, 192, 242, 244, 64, 57, 241,
+                245, 58, 122, 52, 115, 127, 184, 49, 112, 181, 126, 179, 183, 177, 54, 119, 118, 59, 119, 251,
+                114, 60, 189, 175, 48];
+            var dataf = fntt.backward(fntt.forward(data));
+            console.log(dataf);
         });
     });
 });
