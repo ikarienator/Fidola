@@ -408,6 +408,7 @@ includes(seq, require("./sequence/Shuffle"));
 var ds = fast.ds = {};
 includes(ds, require("./datastructure/BinaryHeap.js"));
 includes(ds, require("./datastructure/RedBlackTree.js"));
+includes(ds, require("./datastructure/BinarySearchTree.js"));
 
 var nt = fast.nt = {};
 includes(nt, require("./nt/Basics.js"));
@@ -798,15 +799,11 @@ exports.LIS = exports.longestIncreasingSubsequence = longestIncreasingSubsequenc
 require.define("/sequence/Shuffle.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Randomly shuffle the array with.
  * @param {Array} array
- * @param {Function} [rng] Function generates number in [0, 1)
  */
-function shuffle(array, rng) {
+function shuffle(array) {
     var i, n = array.length, pivot, temp;
-    if (!rng) {
-        rng = Math.random;
-    }
     for (i = n - 2; i > 0; i--) {
-        pivot = rng() * (i + 1);
+        pivot = Math.random() * (i + 1);
         if (pivot >= i) {
             continue;
         }
@@ -996,7 +993,31 @@ RedBlackTreeNode.prototype = {
      */
     count: 1,
 
-    data: null
+    data: null,
+
+    /**
+     * Get the left most node in the subtree.
+     * @returns {RedBlackTreeNode}
+     */
+    leftMost: function () {
+        var node = this;
+        while (node.left) {
+            node = node.left;
+        }
+        return node;
+    },
+
+    /**
+     * Get the right most node in the subtree.
+     * @returns {RedBlackTreeNode}
+     */
+    rightMost: function () {
+        var node = this;
+        while (node.right) {
+            node = node.right;
+        }
+        return node;
+    }
 };
 
 /**
@@ -1009,6 +1030,8 @@ function RedBlackTree() {
     this.root = null;
 }
 
+RedBlackTree.NODE_TYPE = RedBlackTreeNode;
+
 RedBlackTree.prototype = {
     root: null,
 
@@ -1018,7 +1041,7 @@ RedBlackTree.prototype = {
      * @returns {RedBlackTreeNode}
      */
     first: function () {
-        return this._nodeLeftMost(this.root);
+        return this.root && this.root.leftMost();
     },
 
     /**
@@ -1026,7 +1049,7 @@ RedBlackTree.prototype = {
      * @returns {RedBlackTreeNode}
      */
     last: function () {
-        return this._nodeRightMost(this.root);
+        return this.root && this.root.rightMost();
     },
 
     /**
@@ -1036,7 +1059,7 @@ RedBlackTree.prototype = {
      */
     next: function (node) {
         if (node.right) {
-            return this._nodeLeftMost(node.right);
+            return node.right.leftMost();
         } else if (node.parent) {
             var curr = node;
             while (curr.parent && curr.parent.left !== curr) {
@@ -1056,7 +1079,7 @@ RedBlackTree.prototype = {
      */
     prev: function (node) {
         if (node.left) {
-            return this._nodeRightMost(node.left);
+            return node.left.rightMost();
         } else if (node.parent) {
             var curr = node;
             while (curr.parent && curr.parent.right !== curr) {
@@ -1087,7 +1110,7 @@ RedBlackTree.prototype = {
     removeNode: function (node) {
         if (node) {
             if (node.right) {
-                this.swap(node, this._nodeLeftMost(node.right));
+                this.swap(node, node.right.leftMost());
             }
             this._nodeRemoveLeftMost(node);
             this.length--;
@@ -1152,32 +1175,6 @@ RedBlackTree.prototype = {
         } else {
             this.root = node1;
         }
-    },
-
-    /**
-     *
-     * @param {RedBlackTreeNode} node
-     * @returns {RedBlackTreeNode}
-     * @private
-     */
-    _nodeLeftMost: function (node) {
-        while (node && node.left) {
-            node = node.left;
-        }
-        return node;
-    },
-
-    /**
-     *
-     * @param {RedBlackTreeNode} node
-     * @returns {RedBlackTreeNode}
-     * @private
-     */
-    _nodeRightMost: function (node) {
-        while (node && node.right) {
-            node = node.right;
-        }
-        return node;
     },
 
     /**
@@ -1283,7 +1280,7 @@ RedBlackTree.prototype = {
      * @returns {RedBlackTreeNode}
      */
     prepend: function (node) {
-        return this.insertBefore(null, node)
+        return this.insertAfter(null, node)
     },
 
     /**
@@ -1305,6 +1302,7 @@ RedBlackTree.prototype = {
         if (this.length == 0) {
             this.root = newNode;
             this.length = 1;
+            newNode.red = false;
             return newNode;
         } else if (!node) {
             return this.insertAfter(this.last(), newNode);
@@ -1319,7 +1317,7 @@ RedBlackTree.prototype = {
             this._nodeInsertFixUp(newNode);
             return newNode;
         } else {
-            return this.insertAfter(this._nodeRightMost(node.left), newNode);
+            return this.insertAfter(node.left && node.left.rightMost(), newNode);
         }
     },
 
@@ -1333,6 +1331,7 @@ RedBlackTree.prototype = {
         if (this.length == 0) {
             this.root = newNode;
             this.length = 1;
+            newNode.red = false;
             return newNode;
         } else if (!node) {
             return this.insertBefore(this.first(), newNode);
@@ -1347,7 +1346,7 @@ RedBlackTree.prototype = {
             this._nodeInsertFixUp(newNode);
             return newNode;
         } else {
-            return this.insertBefore(this._nodeLeftMost(node.right), newNode);
+            return this.insertBefore(node.right && node.right.leftMost(), newNode);
         }
     },
 
@@ -1554,6 +1553,13 @@ RedBlackTree.prototype = {
     }
 };
 
+exports.RedBlackTreeNode = RedBlackTreeNode;
+exports.RedBlackTree = RedBlackTree;
+});
+
+require.define("/datastructure/BinarySearchTree.js",function(require,module,exports,__dirname,__filename,process,global){var fast = require('../fast'),
+    RedBlackTree = fast.ds.RedBlackTree,
+    RedBlackTreeNode = RedBlackTree.NODE_TYPE;
 /**
  * @class
  * @extends RedBlackTree
@@ -1718,7 +1724,6 @@ BinarySearchTree_prototype.remove = function (data) {
 };
 
 exports.BinarySearchTree = BinarySearchTree;
-exports.RedBlackTree = RedBlackTree;
 });
 
 require.define("/nt/Basics.js",function(require,module,exports,__dirname,__filename,process,global){/**
