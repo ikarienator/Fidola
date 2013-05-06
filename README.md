@@ -12,14 +12,17 @@ This project is current under development.
     - Longest Common Substring using DP(O(n^2))
     - Longest Common Subsequence using DP(O(n^2))
     - KMP Matching
+
 ### General Data Structures
 - Ordered Dictionaries
     - Red-Black Tree
 - Heaps
     - Binary Heap
 - Disjoint Set
+
 ### Numeric Algorithms
 - FFT
+
 ### Simple Number Theory Algorithms
 - Primality Test
 - Greatest Common Divisor
