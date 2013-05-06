@@ -12,11 +12,12 @@ fast.js: Makefile\
 	lib/sequence/LIS.js \
 	lib/sequence/Shuffle.js \
 	lib/datastructure/BinaryHeap.js \
+	lib/datastructure/BinarySearchTree.js \
 	lib/datastructure/RedBlackTree.js \
 	lib/dsp/FFT.js \
-	lib/dsp/FNTT.js \
 	lib/nt/Basics.js \
 	lib/nt/PrimalityTest.js \
+	lib/nt/FNTT.js \
 	lib/mp/BigInteger.js \
 	lib/browser.js \
 	lib/fast.js
