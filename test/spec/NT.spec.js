@@ -13,6 +13,9 @@ describe("Number Theory Algorithm", function () {
             expect(fast.nt.gcd(6, 21)).to.eql(3);
         });
         it("MultMod", function () {
+            expect(fast.nt.multMod(2543234, 0, 2000000011)).to.eql(0);
+            expect(fast.nt.multMod(0, 2543234, 2000000011)).to.eql(0);
+            expect(fast.nt.multMod(2543234, 1, 2000000011)).to.eql(2543234);
             expect(fast.nt.multMod(2543234, 2543234, 2000000011)).to.eql(39143182);
             expect(fast.nt.multMod(232398676, 232398676, 761920913)).to.eql(490012389);
         });
