@@ -410,6 +410,7 @@ includes(ds, require("./datastructure/BinaryHeap.js"));
 includes(ds, require("./datastructure/RedBlackTree.js"));
 
 var nt = fast.nt = {};
+includes(nt, require("./nt/Basics.js"));
 includes(nt, require("./nt/PrimalityTest.js"));
 
 var mp = fast.mp = {};
@@ -1720,57 +1721,142 @@ exports.BinarySearchTree = BinarySearchTree;
 exports.RedBlackTree = RedBlackTree;
 });
 
-require.define("/nt/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){function sqrMult(a, b, n) {
+require.define("/nt/Basics.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ * Greatest common divisor of two integers
+ * @param {Number} a
+ * @param {Number} b
+ * @returns {Number}
+ */
+function gcd(a, b) {
+    var temp, d;
+    // Stein's algorithm
     a |= 0;
     b |= 0;
-    n |= 0;
+    if (a < 0) {
+        a = -a;
+    }
+    if (b < 0) {
+        b = -b;
+    }
+    if (a === 0) {
+        return b;
+    }
+    if (b === 0) {
+        return a;
+    }
+    if (a === b) {
+        return a;
+    }
+    d = 0;
+    while ((a & 1) === 0 && (b & 1) === 0) {
+        d++;
+        a >>= 1;
+        b >>= 1;
+    }
+    while ((a & 1) === 0) {
+        a >>= 1;
+    }
+    while ((b & 1) === 0) {
+        b >>= 1;
+    }
+    while (a && b && a != b) {
+        if (a < b) {
+            temp = a;
+            a = (b - a) >> 1;
+            b = temp;
+            while ((a & 1) === 0) {
+                a >>= 1;
+            }
+        } else {
+            temp = b;
+            b = (a - b) >> 1;
+            a = temp;
+            while ((b & 1) === 0) {
+                b >>= 1;
+            }
+        }
+    }
+    return a << d;
+}
+
+/**
+ *
+ * @param {Number} a
+ * @param {Number} b
+ */
+function gcdExt(a, b) {
+
+}
+
+/**
+ * Returns a * b % n concerning interger overflow.
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} n
+ * @returns {Number}
+ */
+function multMod(a, b, n) {
+    a >>>= 0;
+    b >>>= 0;
+    n >>>= 0;
     a %= n;
     b %= n;
-    if (n < 65536 || (4294967296 / a >= b)) {
+    if (a === 0) return 0;
+    if (b === 0) return 0;
+    if (n < 65536 || (2147483647 / a >= b)) {
         return a * b % n;
     }
     var result = 0;
-    for (var r = 1; r <= b; r <<= 1) {
+    for (var r = 1; r <= b; r += r) {
         if (r & b) {
             result += a;
             result %= n;
         }
-        a <<= 1;
+        a += a;
         a %= n;
     }
     return result;
 }
 
+/**
+ * Returns pow(a,b) % n with exponentiation by squaring
+ * algorithm.
+ * @param a
+ * @param b
+ * @param n
+ * @returns {number}
+ */
 function powerMod(a, b, n) {
     // Optimization for compiler.
     a |= 0;
     b |= 0;
     n |= 0;
-    if (n === 1) {
+    a %= n;
+    if (a == 0) {
         return 0;
     }
-    if (b === 0) {
+    if (b == 0) {
         return 1;
     }
-    if (a === 0) {
-        return 0;
-    }
-    if (a === 1) {
-        return 1;
-    }
+    a %= n;
     var result = 1;
     while (b) {
         if (b & 1) {
-            result = sqrMult(result, a, n);
+            result = multMod(result, a, n);
         }
-        a = sqrMult(a, a, n);
+        a = multMod(a, a, n);
         b >>= 1;
     }
     return result;
 }
 
-function millerRabinPrimalityTest(a, s, d, n) {
-    var c = powerMod(a, d, n);
+exports.gcd = gcd;
+exports.powerMod = powerMod;
+exports.multMod = multMod;
+});
+
+require.define("/nt/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){function millerRabinPrimalityTest(a, s, d, n) {
+    var c = fast.nt.powerMod(a, d, n);
     if (c === 1) {
         return true;
     }
@@ -1778,16 +1864,17 @@ function millerRabinPrimalityTest(a, s, d, n) {
         if (c === n - 1) {
             return true;
         }
-        c = sqrMult(c, c, n);
-        if (c == 1) {
-            return false;
-        }
+        c = fast.nt.multMod(c, c, n);
     }
     return false;
 }
 
 var SMALL_PRIMES = null;
 
+/**
+ * Generates all primes less than 1M using Sieve of
+ * Eratosthenes algorithm.
+ */
 function preparePrimes() {
     SMALL_PRIMES = new Uint32Array(82025);
     SMALL_PRIMES[0] = 2;
@@ -1806,32 +1893,20 @@ function preparePrimes() {
             SMALL_PRIMES[index++] = i;
         }
     }
-    SMALL_PRIMES.indexOf = function (a) {
-        var lo = 0, hi = SMALL_PRIMES.length;
-        while (lo + 1 < hi) {
-            var mid = (lo + hi) >> 1;
-            if (this[mid] === a) {
-                return mid;
-            } else if (this[mid] < a) {
-                lo = mid + 1;
-            } else {
-                hi = mid;
-            }
-        }
-        if (this[lo] == a) {
-            return lo;
-        }
-        return -1;
-    };
 }
 
 /**
+ * Test if a small number (i.e. number can be fit into a 31-bit integer)
+ * is a prime number.
+ *
+ * Using Miller-Rabin Primality test with base 2, 7 and 61 which covers
+ * all positive integer less than 4759123141 with no false positive.
  *
  * @param {Number} small_number
  * @returns {Boolean}
  */
 function primeQ(small_number) {
-    small_number = small_number | 0;
+    small_number |= 0;
     if (small_number <= 0) {
         return false;
     }
@@ -1839,7 +1914,7 @@ function primeQ(small_number) {
         preparePrimes();
     }
     if (small_number < 1048576) {
-        return SMALL_PRIMES.indexOf(small_number) !== -1;
+        return fast.seq.binarySearch(SMALL_PRIMES, small_number) !== -1;
     }
     if ((small_number & 1) == 0) {
         return false;
@@ -2534,29 +2609,24 @@ function FastFourierTransform(length) {
             this.cosTable[d] = Math.cos(Math.PI / d);
         }
     }
-    this.reverseTable = FastFourierTransform.reverseTable[n];
-    if (!this.reverseTable) {
-        FastFourierTransform.reverseTable[n] = this.reverseTable = [];
-        for (i = 0; i < n; i++) {
-            c = n >> 1;
-            k = i;
-            rev = 0;
-            while (c) {
-                rev <<= 1;
-                rev |= k & 1;
-                c >>= 1;
-                k >>= 1;
-            }
-            this.reverseTable[i] = rev;
+    this.reverseTable = [];
+    for (i = 0; i < n; i++) {
+        c = n >> 1;
+        k = i;
+        rev = 0;
+        while (c) {
+            rev <<= 1;
+            rev |= k & 1;
+            c >>= 1;
+            k >>= 1;
         }
+        this.reverseTable[i] = rev;
     }
 }
 
 FastFourierTransform.sinTable = {};
 
 FastFourierTransform.cosTable = {};
-
-FastFourierTransform.reverseTable = {};
 
 FastFourierTransform.prototype = {
     _fftcore: function (list) {
@@ -2678,7 +2748,15 @@ exports.fft = fft;
 exports.ifft = ifft;
 });
 
-require.define("/dsp/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){function FastNumberTheoreticTransform(depth, mod, root, iroot) {
+require.define("/dsp/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ *
+ * @param depth
+ * @param mod
+ * @param root
+ * @param iroot
+ * @constructor
+ */
+function FastNumberTheoreticTransform(depth, mod, root, iroot) {
     var n = this.length = 1 << depth, c, k, rev;
     this.root = root;
     this.mod = mod;
@@ -2751,7 +2829,7 @@ FastNumberTheoreticTransform.prototype.backward = function (list) {
         }
         this.__fnttcore(list, this.inverseRootTable);
         for (i = 0; i < n; i++) {
-            list /= n;
+            list[i] /= n;
         }
     }
     return list;
