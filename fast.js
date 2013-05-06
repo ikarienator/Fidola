@@ -411,9 +411,9 @@ includes(ds, require("./datastructure/RedBlackTree.js"));
 includes(ds, require("./datastructure/BinarySearchTree.js"));
 
 var nt = fast.nt = {};
-includes(nt, require("./nt/Basics.js"));
-includes(nt, require("./nt/PrimalityTest.js"));
-includes(nt, require("./nt/FNTT.js"));
+includes(nt, require("./numbertheory/Basics.js"));
+includes(nt, require("./numbertheory/PrimalityTest.js"));
+includes(nt, require("./numbertheory/FNTT.js"));
 
 var numeric = fast.numeric = {};
 includes(numeric, require("./numeric/FastFourierTransform.js"));
@@ -1730,7 +1730,7 @@ BinarySearchTree_prototype.remove = function (data) {
 exports.BinarySearchTree = BinarySearchTree;
 });
 
-require.define("/nt/Basics.js",function(require,module,exports,__dirname,__filename,process,global){/**
+require.define("/numbertheory/Basics.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Greatest common divisor of two integers
  * @param {Number} a
  * @param {Number} b
@@ -1855,7 +1855,7 @@ exports.powerMod = powerMod;
 exports.multMod = multMod;
 });
 
-require.define("/nt/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){/**
+require.define("/numbertheory/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Miller-Rabin Primality Test with base a, odd index d and modular n,
  * and n = 2^s * d.
  * @param a
@@ -1943,7 +1943,7 @@ function primeQ(small_number) {
 exports.primeQ = primeQ;
 });
 
-require.define("/nt/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){/**
+require.define("/numbertheory/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){/**
  *
  * @param depth
  * @param mod

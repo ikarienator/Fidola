@@ -16,9 +16,9 @@ fast.js: Makefile\
 	lib/datastructure/RedBlackTree.js \
 	lib/numeric/FastFourierTransform.js \
 	lib/numeric/CubicPolynomialSolver.js \
-	lib/nt/Basics.js \
-	lib/nt/PrimalityTest.js \
-	lib/nt/FNTT.js \
+	lib/numbertheory/Basics.js \
+	lib/numbertheory/PrimalityTest.js \
+	lib/numbertheory/FNTT.js \
 	lib/browser.js \
 	lib/fast.js
 	@rm -f $@
