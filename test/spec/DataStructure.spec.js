@@ -448,6 +448,13 @@ describe("Data Structure", function () {
             expect(pq.size()).to.eql(data.length + 5);
         });
 
+        it("Inverted", function () {
+            var pq = new fast.ds.BinaryHeap(data.slice(), function (a, b) {
+                return a > b;
+            });
+            expect(pq.pop()).to.be(sorted[sorted.length - 1]);
+        });
+
         it("Remove", function () {
             var pq = new fast.ds.BinaryHeap(data),
                 arr = pq._arr, i, j;

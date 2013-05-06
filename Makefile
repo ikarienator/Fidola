@@ -14,7 +14,8 @@ fast.js: Makefile\
 	lib/datastructure/BinaryHeap.js \
 	lib/datastructure/BinarySearchTree.js \
 	lib/datastructure/RedBlackTree.js \
-	lib/dsp/FFT.js \
+	lib/numeric/FastFourierTransform.js \
+	lib/numeric/CubicPolynomialSolver.js \
 	lib/nt/Basics.js \
 	lib/nt/PrimalityTest.js \
 	lib/nt/FNTT.js \

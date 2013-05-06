@@ -4,4 +4,4 @@ require('./spec/Sequence.spec.js');
 require('./spec/DataStructure.spec.js');
 require('./spec/NT.spec.js');
 require('./spec/MP.spec.js');
-require('./spec/DSP.spec.js');
+require('./spec/Numeric.spec.js');

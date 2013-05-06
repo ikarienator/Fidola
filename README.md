@@ -5,7 +5,7 @@
 A simple, tested javascript algorithm library for node.js and browser.
 This project is current under development.
 
-## Current Progress
+## Currently Available
 ### General Algorithms
 - Sequence Algorithms
     - Longest Increasing Subsequence
