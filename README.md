@@ -27,13 +27,13 @@ A simple, tested, ready-to-used javascript algorithm library for node.js and bro
 - Linked List(Singly and Doubly)
 - Ordered Dictionaries
     - Unbalanced BST
-    - Red-Black Tree
+    - Red-Black Tree _Finished_
     - Splay Tree
     - AVL Tree
     - Skip List
     - Van Emde Boas Tree
 - Heaps
-    - Binary Heap
+    - Binary Heap _Finished_
     - Cartesian Tree
 - Disjoint Set
 - Young Tableau
@@ -51,7 +51,7 @@ A simple, tested, ready-to-used javascript algorithm library for node.js and bro
 - Numeric Derivative
 - Numeric Integral
 - Cubic Polynomial Solver
-- FFT
+- FFT _Finished_
 - Polynomial Evaluation
 
 ### Simple Number Theory Algorithms
