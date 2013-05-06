@@ -413,13 +413,13 @@ includes(ds, require("./datastructure/BinarySearchTree.js"));
 var nt = fast.nt = {};
 includes(nt, require("./nt/Basics.js"));
 includes(nt, require("./nt/PrimalityTest.js"));
+includes(nt, require("./nt/FNTT.js"));
 
 var mp = fast.mp = {};
 includes(mp, require("./mp/BigInteger.js"));
 
 var dsp = fast.dsp = {};
 includes(dsp, require("./dsp/FFT.js"));
-includes(dsp, require("./dsp/FNTT.js"));
 });
 
 require.define("/sequence/BinarySearch.js",function(require,module,exports,__dirname,__filename,process,global){function binarySearch(sortedArray, needle) {
@@ -1954,6 +1954,113 @@ function primeQ(small_number) {
 exports.primeQ = primeQ;
 });
 
+require.define("/nt/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ *
+ * @param depth
+ * @param mod
+ * @param root
+ * @param iroot
+ * @constructor
+ */
+function FastNumberTheoreticTransform(depth, mod, root, iroot) {
+    var n = this.length = 1 << depth, c, k, rev;
+    this.root = root;
+    this.mod = mod;
+    this.rootTable = {};
+    this.inverseRootTable = {};
+    for (var i = 0; i < depth; i++) {
+        this.rootTable[n >> i + 1] = root;
+        this.inverseRootTable[n >> i + 1] = iroot;
+        root *= root;
+        root %= mod;
+        iroot *= iroot;
+        iroot %= mod;
+    }
+    this.rootTable[1] = 1;
+    this.inverseRootTable[1] = 1;
+    this.reverseTable = FastNumberTheoreticTransform.reverseTable[n];
+    if (!this.reverseTable) {
+        FastNumberTheoreticTransform.reverseTable[n] = this.reverseTable = [];
+        for (i = 0; i < n; i++) {
+            c = n >> 1;
+            k = i;
+            rev = 0;
+            while (c) {
+                rev <<= 1;
+                rev |= k & 1;
+                c >>= 1;
+                k >>= 1;
+            }
+            this.reverseTable[i] = rev;
+        }
+    }
+    // Find smallest prime length * k + 1 > mod
+    // Using BLS test: http://www.math.dartmouth.edu/~carlp/PDF/110.pdf
+}
+
+FastNumberTheoreticTransform.reverseTable = {};
+
+FastNumberTheoreticTransform.prototype.forward = function (list) {
+    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
+    for (i = 0; i < n; i++) {
+        rev = reverseTable[i];
+        if (rev < i) {
+            a = list[i];
+            list[i] = list[rev];
+            list[rev] = a;
+        }
+    }
+    this.__fnttcore(list, this.rootTable);
+    return list;
+};
+
+FastNumberTheoreticTransform.prototype.backward = function (list) {
+    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
+    for (i = 0; i < n; i++) {
+        rev = reverseTable[i];
+        if (rev < i) {
+            a = list[i];
+            list[i] = list[rev];
+            list[rev] = a;
+        }
+    }
+    this.__fnttcore(list, this.inverseRootTable);
+    for (i = 0; i < n; i++) {
+        list[i] *= 253;
+        list[i] %= this.mod;
+    }
+    return list;
+};
+
+FastNumberTheoreticTransform.prototype.__fnttcore = function (list, rootTable) {
+    var n = this.length,
+        mod = this.mod,
+        i, m, k, om, o, t;
+    m = 1;
+    while (m < n) {
+        om = rootTable[m];
+        o = 1;
+        for (k = 0; k < m; k++) {
+            for (i = k; i < n; i += m << 1) {
+                t = o * list[i + m];
+                list[i + m] = list[i] - t;
+                list[i] += t;
+            }
+            o *= om;
+            o %= mod;
+        }
+        m = m << 1;
+    }
+    for (i = 0; i < n; i++) {
+        list[i] %= mod;
+        list[i] += mod;
+        list[i] %= mod;
+    }
+};
+
+exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
+});
+
 require.define("/mp/BigInteger.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Natural Number
  * @param {Array} [array]
@@ -2766,113 +2873,6 @@ function ifft(list, length) {
 
 exports.fft = fft;
 exports.ifft = ifft;
-});
-
-require.define("/dsp/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){/**
- *
- * @param depth
- * @param mod
- * @param root
- * @param iroot
- * @constructor
- */
-function FastNumberTheoreticTransform(depth, mod, root, iroot) {
-    var n = this.length = 1 << depth, c, k, rev;
-    this.root = root;
-    this.mod = mod;
-    this.rootTable = {};
-    this.inverseRootTable = {};
-    for (var i = 0; i < depth; i++) {
-        this.rootTable[n >> i + 1] = root;
-        this.inverseRootTable[n >> i + 1] = iroot;
-        root *= root;
-        root %= mod;
-        iroot *= iroot;
-        iroot %= mod;
-    }
-    this.rootTable[1] = 1;
-    this.inverseRootTable[1] = 1;
-    this.reverseTable = FastNumberTheoreticTransform.reverseTable[n];
-    if (!this.reverseTable) {
-        FastNumberTheoreticTransform.reverseTable[n] = this.reverseTable = [];
-        for (i = 0; i < n; i++) {
-            c = n >> 1;
-            k = i;
-            rev = 0;
-            while (c) {
-                rev <<= 1;
-                rev |= k & 1;
-                c >>= 1;
-                k >>= 1;
-            }
-            this.reverseTable[i] = rev;
-        }
-    }
-    // Find smallest prime length * k + 1 > mod
-    // Using BLS test: http://www.math.dartmouth.edu/~carlp/PDF/110.pdf
-}
-
-FastNumberTheoreticTransform.reverseTable = {};
-
-FastNumberTheoreticTransform.prototype.forward = function (list) {
-    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-    for (i = 0; i < n; i++) {
-        rev = reverseTable[i];
-        if (rev < i) {
-            a = list[i];
-            list[i] = list[rev];
-            list[rev] = a;
-        }
-    }
-    this.__fnttcore(list, this.rootTable);
-    return list;
-};
-
-FastNumberTheoreticTransform.prototype.backward = function (list) {
-    var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-    for (i = 0; i < n; i++) {
-        rev = reverseTable[i];
-        if (rev < i) {
-            a = list[i];
-            list[i] = list[rev];
-            list[rev] = a;
-        }
-    }
-    this.__fnttcore(list, this.inverseRootTable);
-    for (i = 0; i < n; i++) {
-        list[i] *= 253;
-        list[i] %= this.mod;
-    }
-    return list;
-};
-
-FastNumberTheoreticTransform.prototype.__fnttcore = function (list, rootTable) {
-    var n = this.length,
-        mod = this.mod,
-        i, m, k, om, o, t;
-    m = 1;
-    while (m < n) {
-        om = rootTable[m];
-        o = 1;
-        for (k = 0; k < m; k++) {
-            for (i = k; i < n; i += m << 1) {
-                t = o * list[i + m];
-                list[i + m] = list[i] - t;
-                list[i] += t;
-            }
-            o *= om;
-            o %= mod;
-        }
-        m = m << 1;
-    }
-    for (i = 0; i < n; i++) {
-        list[i] %= mod;
-        list[i] += mod;
-        list[i] %= mod;
-    }
-};
-
-exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
 });
 
 require.define("/browser.js",function(require,module,exports,__dirname,__filename,process,global){global.fast = require("./fast.js");

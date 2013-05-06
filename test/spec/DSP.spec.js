@@ -80,33 +80,4 @@ describe("Digital Signal Processing", function () {
             }
         });
     });
-
-    describe("FNTT", function () {
-        it("Load", function () {
-            expect(fast.dsp.FastNumberTheoreticTransform).not.to.eql(undefined);
-            new fast.dsp.FastNumberTheoreticTransform(6, 257, 81, 165);
-        });
-        it("Small", function () {
-            var fntt = new fast.dsp.FastNumberTheoreticTransform(2, 5, 2, 3);
-            var data = [1, 3, 2, 4];
-            var dataf = fntt.forward(data);
-            expect(dataf).to.eql([ 0, 2, 1, 1]);
-            dataf = fntt.backward(dataf);
-            expect(dataf).to.eql(data);
-        });
-        it("Forward", function () {
-            var fntt = new fast.dsp.FastNumberTheoreticTransform(6, 257, 81, 165);
-            var data = [191, 58, 178, 59, 112, 51, 190, 55, 51, 186, 182, 56, 50, 111, 112, 177, 242, 190, 192,
-                126, 111, 244, 50, 64, 123, 124, 246, 115, 117, 182, 245, 185, 248, 192, 242, 244, 64, 57, 241,
-                245, 58, 122, 52, 115, 127, 184, 49, 112, 181, 126, 179, 183, 177, 54, 119, 118, 59, 119, 251,
-                114, 60, 189, 175, 48];
-            var dataf = fntt.forward(data);
-            expect(dataf).to.eql([141, 84, 210, 182, 72, 46, 110, 219, 104, 152, 85, 180, 40, 229, 156, 26, 98,
-                7, 140, 214, 154, 87, 113, 256, 58, 79, 121, 1, 89, 139, 208, 153, 212, 133, 42, 99, 242, 159,
-                182, 58, 191, 26, 81, 141, 81, 122, 186, 210, 237, 209, 87, 73, 173, 156, 134, 117, 216, 47, 225,
-                199, 119, 44, 232, 240]);
-            dataf = fntt.backward(dataf);
-            expect(dataf).to.eql(data);
-        });
-    });
 });
