@@ -23,8 +23,8 @@
  */
 
 describe("Digital Signal Processing", function () {
-    var fft = fast.dsp.fft,
-        ifft = fast.dsp.ifft;
+    var fft = fast.numeric.fft,
+        ifft = fast.numeric.ifft;
 
     function num_test_arr(a, b) {
         var i, len = a.length, diff = [], exp = [];
@@ -78,6 +78,69 @@ describe("Digital Signal Processing", function () {
                     break;
                 }
             }
+        });
+    });
+
+    describe("Solvers", function () {
+        var linearFunction = fast.numeric.linearFunction;
+        var quadraticFunction = fast.numeric.quadraticFunction;
+        var cubicFunction = fast.numeric.cubicFunction;
+        it("Linear equation", function () {
+            var solver = cubicFunction(0, 0, -15, -4);
+            expect(solver(-1 / 3)).to.eql(1);
+            expect(solver.solve(1)).to.eql([-1 / 3]);
+            expect(solver.solve(3)).to.eql([-7 / 15]);
+
+            solver = linearFunction(0, -1);
+            expect(solver(0)).to.eql(-1);
+            expect(solver.solve(1)).to.eql([]);
+            expect(solver.solve(3)).to.eql([]);
+        });
+
+        it("Quadratic equation", function () {
+            var solver = cubicFunction(0, 1, -15, -4),
+                k = 13242,
+                roots = solver.solve(k);
+            expect(roots.length).to.be(2);
+            expect(Math.abs(solver(roots[0]) - k)).to.eql(0);
+            expect(Math.abs(solver(roots[1]) - k)).to.eql(0);
+            expect(solver.solve(-k).length).to.be(0);
+        });
+
+        describe("Cubic equation", function () {
+            it("Discriminant1 == 0", function () {
+                var solver = cubicFunction(1, 3, 3, 1);
+                var roots = solver.solve(-1);
+                expect(roots.length).to.be(1);
+                expect(Math.abs(solver(roots[0]))).to.eql(1);
+            });
+
+            it("Single real root", function () {
+                var solver = cubicFunction(1, 2, 3, 1),
+                    roots = solver.solve(0);
+                expect(roots.length).to.be(1);
+                expect(Math.abs(solver(roots[0]))).to.eql(0);
+            });
+
+            it("Triple real roots", function () {
+                var cases = [
+                    [1, 0, -15, -4, 0],
+                    [1, 10, -15, -4, 0],
+                    [-1, 10, -15, -4, 0],
+                    [1, 9, 15, -4, 21],
+                    [-1, 9, -15, -4, 21]
+                ];
+                cases.forEach(function (kase) {
+                    var solver = cubicFunction.apply(null, kase);
+                    var roots = solver.solve(kase[4]);
+                    expect(roots.length).to.be(3);
+                    expect(roots[0]).to.not.greaterThan(roots[1]);
+                    expect(roots[1]).to.not.greaterThan(roots[2]);
+                    expect(Math.abs(solver(roots[0]) - kase[4])).to.lessThan(1e-7);
+                    expect(Math.abs(solver(roots[1]) - kase[4])).to.lessThan(1e-7);
+                    expect(Math.abs(solver(roots[2]) - kase[4])).to.lessThan(1e-7);
+                });
+            });
         });
     });
 });
