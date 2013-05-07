@@ -2,13 +2,16 @@
 <head>
     <title>Unit Test</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="./3rd_party/mocha.css" />
-    <script src="./3rd_party/mocha.js"></script>
-    <script src="./3rd_party/expect.js"></script>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/expect.js/expect.js"></script>
     <script>mocha.setup('bdd')</script>
     <script src="../fast.js"></script>
     <script src="spec/Sequence.spec.js"></script>
-    <script src="spec/DataStructure.spec.js"></script>
+    <script src="spec/datastructure/BinaryHeap.spec.js"></script>
+    <script src="spec/datastructure/BinarySearchTree.spec.js"></script>
+    <script src="spec/datastructure/CartesianTree.spec.js"></script>
+    <script src="spec/datastructure/RedBlackTree.spec.js"></script>
     <script src="spec/Numeric.spec.js"></script>
     <script src="spec/NumberTheory.spec.js"></script>
     <script src="spec/MultiPrecision.spec.js"></script>
@@ -20,7 +23,7 @@
     <script>
         onload = function(){
             var runner = mocha.run();
-            runner.globals(['foo', 'bar', 'baz']);
+            runner.globals(['fast']);
         };
     </script>
 </head>
