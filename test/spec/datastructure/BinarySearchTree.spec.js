@@ -4,12 +4,12 @@ describe("Data Structure", function () {
             seed = 1.17;
 
         function random() {
-            seed *= 12.52;
+            seed *= 12.521;
             seed -= Math.floor(seed);
             return seed;
         }
 
-        for (var i = 0; i < 40; i++) {
+        for (var i = 0; i < 80; i++) {
             data.push(i);
         }
         fast.seq.shuffle(data, random);
