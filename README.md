@@ -14,6 +14,7 @@ This project is currently under development.
     - KMP Matching
 
 ### General Data Structures
+- Double Linked List
 - Ordered Dictionaries
     - Red-Black Tree
 - Heaps
@@ -43,7 +44,7 @@ This project is currently under development.
 - By-value Hashing for Objects
 
 ### General Data Structures
-- Linked List(Singly and Doubly)
+- Singly Linked List
 - Ordered Dictionaries
     - Unbalanced BST
     - Splay Tree
