@@ -18,10 +18,12 @@ This project is current under development.
     - Red-Black Tree
 - Heaps
     - Binary Heap
+    - Cartesian Tree
 - Disjoint Set
 
 ### Numeric Algorithms
 - FFT
+- Cubic Polynomial Solver
 
 ### Simple Number Theory Algorithms
 - Primality Test
@@ -47,8 +49,6 @@ This project is current under development.
     - AVL Tree
     - Skip List
     - Van Emde Boas Tree
-- Heaps
-    - Cartesian Tree
 - Young Tableau
 
 ### Graph Theory
@@ -63,7 +63,6 @@ This project is current under development.
 ### Numeric Algorithms
 - Numeric Derivative
 - Numeric Integral
-- Cubic Polynomial Solver
 - Polynomial Evaluation
 
 ### Simple Number Theory Algorithms
