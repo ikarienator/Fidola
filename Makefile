@@ -12,6 +12,7 @@ fast.js: Makefile\
 	lib/sequence/LIS.js \
 	lib/sequence/Shuffle.js \
 	lib/datastructure/BinaryHeap.js \
+	lib/datastructure/CartesianTree.js \
 	lib/datastructure/BinarySearchTree.js \
 	lib/datastructure/RedBlackTree.js \
 	lib/numeric/FastFourierTransform.js \

@@ -18,6 +18,7 @@ This project is current under development.
     - Red-Black Tree
 - Heaps
     - Binary Heap
+    - Cartesian Tree
 - Disjoint Set
 
 ### Numeric Algorithms
@@ -48,8 +49,6 @@ This project is current under development.
     - AVL Tree
     - Skip List
     - Van Emde Boas Tree
-- Heaps
-    - Cartesian Tree
 - Young Tableau
 
 ### Graph Theory
