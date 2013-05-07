@@ -27,6 +27,7 @@ This project is currently under development.
 
 ### Simple Number Theory Algorithms
 - Primality Test
+- Fast Number Theoretic Transform
 - Greatest Common Divisor
 
 ## Wish List
