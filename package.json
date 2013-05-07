@@ -15,7 +15,10 @@
     },
     "license": "BSD",
     "scripts": {
-        "test": "mocha -R spec test/test.js",
-        "coverage": "istanbul cover test/cover.js"
+        "test": "mocha -R spec test/test.js && npm run-script coverage",
+        "coverage": "npm run-script analyze-coverage && npm run-script check-coverage",
+        "analyze-coverage": "node node_modules/istanbul/lib/cli.js cover test/cover.js",
+        "check-coverage": "node node_modules/istanbul/lib/cli.js check-coverage --statement -0 --branch -0 --function 100"
+
     }
 }
