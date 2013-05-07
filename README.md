@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/ikarienator/fast.js.png?branch=master)](https://travis-ci.org/ikarienator/fast.js)
 
 A simple, tested javascript algorithm library for node.js and browser.
-This project is current under development.
+This project is currently under development.
 
 ## Currently Available
 ### General Algorithms
