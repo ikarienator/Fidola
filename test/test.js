@@ -6,6 +6,7 @@ require('./spec/datastructure/BinarySearchTree.spec.js');
 require('./spec/datastructure/CartesianTree.spec.js');
 require('./spec/datastructure/RedBlackTree.spec.js');
 require('./spec/datastructure/LinkedList.spec.js');
+require('./spec/datastructure/ImmutableArray.js');
 require('./spec/NumberTheory.spec.js');
 require('./spec/MultiPrecision.spec.js');
 require('./spec/Numeric.spec.js');

@@ -15,6 +15,7 @@ This project is currently under development.
 
 ### General Data Structures
 - Double Linked List
+- Immutable Array
 - Ordered Dictionaries
     - Red-Black Tree
 - Heaps
