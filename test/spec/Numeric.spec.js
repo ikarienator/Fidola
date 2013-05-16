@@ -23,8 +23,8 @@
  */
 
 describe("Digital Signal Processing", function () {
-    var fft = fast.numeric.fft,
-        ifft = fast.numeric.ifft;
+    var fft = fidola.numeric.fft,
+        ifft = fidola.numeric.ifft;
 
     function num_test_arr(a, b) {
         var i, len = a.length, diff = [], exp = [];
@@ -37,37 +37,37 @@ describe("Digital Signal Processing", function () {
 
     describe("FFT", function () {
         it("Small fft", function () {
-            expect(fft([1])).to.eql([1, 0]);
-            expect(fft([1], 4)).to.eql([1, 0, 1, 0, 1, 0, 1, 0]);
-            var data = [10, 20, 30, 40];
+            expect(fft([1, 0])).to.eql([1, 0]);
+            expect(fft([1], 8)).to.eql([1, 0, 1, 0, 1, 0, 1, 0]);
+            var data = [10, 0, 20, 0, 30, 0, 40, 0];
             expect(fft(data)).to.eql([100, 0, -20, 20, -20, 0, -20, -20]);
 
             data = [];
             var len = 16;
             for (var i = 0; i < len; i++) {
-                data[i] = Math.cos(i / len * Math.PI * 2);
+                data[i * 2] = Math.cos(i / len * Math.PI * 2);
+                data[i * 2 + 1] = Math.sin(i / len * Math.PI * 2);
             }
             fft(data);
-            num_test_arr(data, [0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0 ]);
+            num_test_arr(data, [0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]);
         });
         it("Small ifft", function () {
-            expect(ifft([1, 0])).to.eql([1]);
-            expect(ifft([1, 0], 4)).to.eql([0.5, 0.5]);
+            expect(ifft([1, 0])).to.eql([1, 0]);
+            expect(ifft([1, 0], 4)).to.eql([0.5, 0, 0.5, 0]);
             var data = [100, 0, -20, 20, -20, 0, -20, -20];
-            expect(ifft(data)).to.eql([10, 20, 30, 40]);
-            expect(fft(data)).to.eql([100, 0, -20, 20, -20, 0, -20, -20]);
+            num_test_arr(ifft(data), [10, 0, 20, 0, 30, 0, 40, 0]);
+            num_test_arr(fft(data), [100, 0, -20, 20, -20, 0, -20, -20]);
         });
         it("Huge fft (64k elements)", function () {
             var data = [], i, len = 65536, amp = 32, amp2 = 18, freq = 32, freq2 = 37, diff, esp = 1e-5;
             for (i = 0; i < len; i++) {
-                data[i] = amp * Math.cos(freq * i / len * Math.PI * 2) + amp2 * Math.cos(freq2 * i / len * Math.PI * 2);
+                data[i * 2] = amp * Math.cos(freq * i / len * Math.PI * 2) + amp2 * Math.cos(freq2 * i / len * Math.PI * 2);
+                data[i * 2 + 1] = amp * Math.sin(freq * i / len * Math.PI * 2) + amp2 * Math.sin(freq2 * i / len * Math.PI * 2);
             }
             fft(data);
             for (i = 0; i < len; i++) {
-                diff = Math.abs(data[i * 2] - ((i == freq) || (len - i == freq) ? amp * len / 2 : (
-                    (i == freq2) || (len - i == freq2) ? amp2 * len / 2 : 0
-                    )));
+                diff = Math.abs(data[i * 2] - (i == freq ? amp * len : (i == freq2 ? amp2 * len : 0)));
                 if (diff > esp) {
                     expect(diff).to.lessThan(esp);
                     break;
@@ -82,9 +82,9 @@ describe("Digital Signal Processing", function () {
     });
 
     describe("Solvers", function () {
-        var linearFunction = fast.numeric.linearFunction;
-        var quadraticFunction = fast.numeric.quadraticFunction;
-        var cubicFunction = fast.numeric.cubicFunction;
+        var linearFunction = fidola.numeric.linearFunction;
+        var quadraticFunction = fidola.numeric.quadraticFunction;
+        var cubicFunction = fidola.numeric.cubicFunction;
         it("Linear equation", function () {
             var solver = cubicFunction(0, 0, -15, -4);
             expect(solver(-1 / 3)).to.eql(1);

@@ -1,8 +1,8 @@
 describe("Data Structure", function () {
     describe("Red-Black Tree", function () {
         it("Insert", function () {
-            var Node = fast.ds.RedBlackTreeNode,
-                rbTree = new fast.ds.RedBlackTree(),
+            var Node = fidola.ds.RedBlackTreeNode,
+                rbTree = new fidola.ds.RedBlackTree(),
                 root = new Node(0),
                 left = new Node(1),
                 left_right = new Node(2),
@@ -21,8 +21,8 @@ describe("Data Structure", function () {
             expect(right.right).to.be(null);
         });
         it("Remove", function () {
-            var Node = fast.ds.RedBlackTreeNode,
-                rbTree = new fast.ds.RedBlackTree(),
+            var Node = fidola.ds.RedBlackTreeNode,
+                rbTree = new fidola.ds.RedBlackTree(),
                 root = new Node(0),
                 nodes = [root];
 
@@ -49,8 +49,8 @@ describe("Data Structure", function () {
             expect(nodes[2].right).to.be(null);
         });
         it("Swap", function () {
-            var Node = fast.ds.RedBlackTreeNode,
-                rbTree = new fast.ds.RedBlackTree(),
+            var Node = fidola.ds.RedBlackTreeNode,
+                rbTree = new fidola.ds.RedBlackTree(),
                 index = [],
                 root = new Node(0),
                 l = new Node(1),

@@ -1,7 +1,7 @@
 describe("Sequence Algorithm", function () {
     describe("Longest Increasing Subsequence", function () {
         var seed = 1.7;
-        var LIS = fast.seq.LIS;
+        var LIS = fidola.seq.LIS;
 
         function random() {
             seed *= 12422.4234;
@@ -58,8 +58,8 @@ describe("Sequence Algorithm", function () {
             return seed;
         }
 
-        var lcs = fast.seq.LCStr,
-            lcsStr = fast.seq.LCStrStr,
+        var lcs = fidola.seq.LCStr,
+            lcsStr = fidola.seq.LCStrStr,
             empty = { startA: 0, startB: 0, length: 0, result: [] };
         it("Empty Array", function () {
             expect(lcs([], [])).to.eql(empty);
@@ -102,7 +102,7 @@ describe("Sequence Algorithm", function () {
     });
 
     describe("Longest Common SubSequence (DP)", function () {
-        var lcs = fast.seq.LCS,
+        var lcs = fidola.seq.LCS,
             empty = { indicesA: [], indicesB: [], length: 0, result: [] };
 
         it("Empty Array", function () {
@@ -163,24 +163,24 @@ describe("Sequence Algorithm", function () {
         }
 
         it("Preprocessing", function () {
-            expect(fast.seq.KMPPreProcess([])).to.eql([]);
-            expect(fast.seq.KMPPreProcess([1])).to.eql([-1]);
-            expect(fast.seq.KMPPreProcess('GCAGAGAG')).to.eql([-1, 0, 0, -1, 1, -1, 1, -1, 1]);
+            expect(fidola.seq.KMPPreProcess([])).to.eql([]);
+            expect(fidola.seq.KMPPreProcess([1])).to.eql([-1]);
+            expect(fidola.seq.KMPPreProcess('GCAGAGAG')).to.eql([-1, 0, 0, -1, 1, -1, 1, -1, 1]);
         });
         it("Empty", function () {
-            expect(fast.seq.KMP('', '')).to.equal(0);
-            expect(fast.seq.KMP('a', '')).to.equal(0);
-            expect(fast.seq.KMP('', 'a')).to.equal(-1);
-            expect(fast.seq.KMP('a', 'a')).to.equal(0);
-            expect(fast.seq.KMP('a', 'b')).to.equal(-1);
+            expect(fidola.seq.KMP('', '')).to.equal(0);
+            expect(fidola.seq.KMP('a', '')).to.equal(0);
+            expect(fidola.seq.KMP('', 'a')).to.equal(-1);
+            expect(fidola.seq.KMP('a', 'a')).to.equal(0);
+            expect(fidola.seq.KMP('a', 'b')).to.equal(-1);
         });
         it("Matching", function () {
-            expect(fast.seq.KMP('ACDACG', 'ACG', function (a, b) {
+            expect(fidola.seq.KMP('ACDACG', 'ACG', function (a, b) {
                 return a === b;
             })).to.equal(3);
-            expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS')).to.equal(40);
-            expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCSUCSUCS')).to.equal(-1);
-            expect(fast.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS-4UCS')).to.equal(-1);
+            expect(fidola.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS')).to.equal(40);
+            expect(fidola.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCSUCSUCS')).to.equal(-1);
+            expect(fidola.seq.KMP('In this context, some properties of the UCS become relevant and have to be addressed. It should be noted that such properties also exist in legacy encodings, and in many cases have been inherited  by the UCS in one way or another from such legacy encodings. In particular, these properties are:', 'UCS-4UCS')).to.equal(-1);
         });
         it("Stress Test", function () {
             var a = [],
@@ -198,9 +198,9 @@ describe("Sequence Algorithm", function () {
             for (var i = 0; i < 10000; i++) {
                 b.push(Math.floor(random() * 1000) % 1000);
             }
-            expect(fast.seq.KMP(a, b)).to.equal(1000);
+            expect(fidola.seq.KMP(a, b)).to.equal(1000);
             b.push(0);
-            expect(fast.seq.KMP(a, b)).to.equal(-1);
+            expect(fidola.seq.KMP(a, b)).to.equal(-1);
         });
         it("Binary Search", function () {
             var array = [];
@@ -208,14 +208,14 @@ describe("Sequence Algorithm", function () {
                 j += (Math.random() * 30 >> 0) + 1;
                 array.push(j);
             }
-            expect(fast.seq.binarySearch(array, array[55])).to.equal(55);
-            expect(fast.seq.binarySearchWithCompare(array, array[55], function (a, b) {
+            expect(fidola.seq.binarySearch(array, array[55])).to.equal(55);
+            expect(fidola.seq.binarySearchWithCompare(array, array[55], function (a, b) {
                 return a - b;
             })).to.equal(55);
-            expect(fast.seq.binarySearchWithCompare(array, array[0], function (a, b) {
+            expect(fidola.seq.binarySearchWithCompare(array, array[0], function (a, b) {
                 return a - b;
             })).to.equal(0);
-            expect(fast.seq.binarySearchWithCompare(array, array[55] + 0.5, function (a, b) {
+            expect(fidola.seq.binarySearchWithCompare(array, array[55] + 0.5, function (a, b) {
                 return a - b;
             })).to.equal(-1);
         });

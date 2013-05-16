@@ -1,5 +1,5 @@
 global.expect = require('expect.js');
-global.fast = require('../lib/fast.js');
+global.fidola = require('../lib/fidola.js');
 require('./spec/Sequence.spec.js');
 require('./spec/datastructure/BinaryHeap.spec.js');
 require('./spec/datastructure/BinarySearchTree.spec.js');

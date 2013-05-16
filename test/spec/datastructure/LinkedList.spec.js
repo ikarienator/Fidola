@@ -2,8 +2,8 @@ describe("Data Structure", function () {
     describe("LinkedList (doubly)", function () {
         var data = [1, 3, 2, 4, 5, 7, 6, 8];
         it("Initialize", function () {
-            expect(fast.ds.LinkedList).not.to.be(undefined);
-            var ll = new fast.ds.LinkedList;
+            expect(fidola.ds.LinkedList).not.to.be(undefined);
+            var ll = new fidola.ds.LinkedList;
             expect(ll.head).to.be(null);
             expect(ll.tail).to.be(null);
         });
@@ -22,7 +22,7 @@ describe("Data Structure", function () {
         }
 
         it("Push", function () {
-            var ll = new fast.ds.LinkedList();
+            var ll = new fidola.ds.LinkedList();
             data.forEach(function (item) {
                 ll.push(item);
             });
@@ -35,7 +35,7 @@ describe("Data Structure", function () {
         });
 
         it("Pop", function () {
-            var ll = new fast.ds.LinkedList();
+            var ll = new fidola.ds.LinkedList();
             expect(ll.pop()).to.be(null);
             expect(ll.length).to.be(0);
             data.forEach(function (item) {
@@ -54,7 +54,7 @@ describe("Data Structure", function () {
         });
 
         it("Unshift", function () {
-            var ll = new fast.ds.LinkedList();
+            var ll = new fidola.ds.LinkedList();
             data.forEach(function (item) {
                 ll.unshift(item);
             });
@@ -67,7 +67,7 @@ describe("Data Structure", function () {
         });
 
         it("Shift", function () {
-            var ll = new fast.ds.LinkedList();
+            var ll = new fidola.ds.LinkedList();
             expect(ll.shift()).to.be(null);
             expect(ll.length).to.be(0);
             data.forEach(function (item) {
@@ -86,7 +86,7 @@ describe("Data Structure", function () {
         });
 
         it("ForEach", function () {
-            var ll = new fast.ds.LinkedList();
+            var ll = new fidola.ds.LinkedList();
             ll.forEach(function () {
                 expect(true).to.be(false);
             });
@@ -106,7 +106,7 @@ describe("Data Structure", function () {
             });
         });
         it("Remove", function () {
-            var ll = new fast.ds.LinkedList();
+            var ll = new fidola.ds.LinkedList();
             ll.forEach(function () {
                 expect(true).to.be(false);
             });

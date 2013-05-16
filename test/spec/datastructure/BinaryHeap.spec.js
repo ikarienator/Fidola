@@ -6,7 +6,7 @@ describe("Data Structure", function () {
             });
 
         it("Initialize", function () {
-            var pq = new fast.ds.BinaryHeap(data);
+            var pq = new fidola.ds.BinaryHeap(data);
             var arr = pq._arr;
             expect(pq.size()).to.eql(data.length);
             expect(arr.length).to.eql(data.length);
@@ -18,7 +18,7 @@ describe("Data Structure", function () {
         });
 
         it("Push", function () {
-            var pq = new fast.ds.BinaryHeap();
+            var pq = new fidola.ds.BinaryHeap();
             var arr = pq._arr, i;
             for (i = 0; i < data.length; i++) {
                 pq.push(data[i]);
@@ -38,14 +38,14 @@ describe("Data Structure", function () {
         });
 
         it("Inverted", function () {
-            var pq = new fast.ds.BinaryHeap(data.slice(), function (a, b) {
+            var pq = new fidola.ds.BinaryHeap(data.slice(), function (a, b) {
                 return a > b;
             });
             expect(pq.pop()).to.be(sorted[sorted.length - 1]);
         });
 
         it("Remove", function () {
-            var pq = new fast.ds.BinaryHeap(data),
+            var pq = new fidola.ds.BinaryHeap(data),
                 arr = pq._arr, i, j;
             for (i = 0; i < data.length / 2; i++) {
                 expect(pq.remove(data[i])).to.be(true);
@@ -61,7 +61,7 @@ describe("Data Structure", function () {
         });
 
         it("Pop", function () {
-            var pq = new fast.ds.BinaryHeap(data);
+            var pq = new fidola.ds.BinaryHeap(data);
             for (var i = 0; pq.size(); i++) {
                 expect(pq.size()).to.eql(data.length - i);
                 expect(pq.pop()).to.eql(sorted[i]);
@@ -72,7 +72,7 @@ describe("Data Structure", function () {
         });
 
         it("Peek", function () {
-            var pq = new fast.ds.BinaryHeap(data);
+            var pq = new fidola.ds.BinaryHeap(data);
             pq.push(3);
             pq.push(5);
             for (var i = 0; pq.size(); i++) {
