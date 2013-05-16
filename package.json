@@ -1,6 +1,6 @@
 {
-    "name": "fidola.js",
-    "description": "Fast, Tested Algorithms in JavaScript",
+    "name": "Fidola",
+    "description": "Fast, high fidelity algorithms in JavaScript",
     "homepage": "",
     "version": "0.0.1-dev",
     "engines": {
