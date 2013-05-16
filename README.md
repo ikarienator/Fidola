@@ -1,19 +1,21 @@
-# Fidola
+Fidola
+======
+_A simple, zero depency, tested, javascript algorithm library for you._
+
 
 [![Build Status](https://travis-ci.org/ikarienator/Fidola.png?branch=master)](https://travis-ci.org/ikarienator/Fidola)
 
-A simple, tested javascript algorithm library for node.js and browser.
 This project is currently under development.
 
-## Currently Available
-### General Algorithms
+### Currently Available
+#### General Algorithms
 - Sequence Algorithms
     - Longest Increasing Subsequence
     - Longest Common Substring using DP(O(n^2))
     - Longest Common Subsequence using DP(O(n^2))
     - KMP Matching
 
-### General Data Structures
+#### General Data Structures
 - Double Linked List
 - Immutable Array
 - Ordered Dictionaries
@@ -23,18 +25,18 @@ This project is currently under development.
     - Cartesian Tree
 - Disjoint Set
 
-### Numeric Algorithms
+#### Numeric Algorithms
 - FFT
 - Cubic Polynomial Solver
 
-### Simple Number Theory Algorithms
+#### Simple Number Theory Algorithms
 - Primality Test
 - Fast Number Theoretic Transform
 - Greatest Common Divisor
 
-## Wish List
+### Wish List
 
-### General Algorithms
+#### General Algorithms
 - Sort and Select algorithms
     - Compare based stable sort algorithm
     - [In-place merge sort](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.22.5514&rep=rep1&type=pdf) 
@@ -44,7 +46,7 @@ This project is currently under development.
     - Quick partition and k-th selection
 - By-value Hashing for Objects
 
-### General Data Structures
+#### General Data Structures
 - Singly Linked List
 - Ordered Dictionaries
     - Unbalanced BST
@@ -54,7 +56,7 @@ This project is currently under development.
     - Van Emde Boas Tree
 - Young Tableau
 
-### Graph Theory
+#### Graph Theory
 - Adjacency Matrix/Adjacency List
 - Traversal
 - Topological Sort
@@ -63,12 +65,12 @@ This project is currently under development.
 - Shortest Paths
 - Maximum Flow
 
-### Numeric Algorithms
+#### Numeric Algorithms
 - Numeric Derivative
 - Numeric Integral
 - Polynomial Evaluation
 
-### Simple Number Theory Algorithms
+#### Simple Number Theory Algorithms
 - Small Number Factoring
 - Big Integer Arithmetics
 - Extended GCD
@@ -77,12 +79,12 @@ This project is currently under development.
 - CRT Recovery
 - Elliptic Curve Arithmetics
 
-### Linear Algebra
+#### Linear Algebra
 - Vectors and Matrix
 - Eigenvalue and Eigenvectors
 - Gaussian Elimination
 
-### Computational Geometry
+#### Computational Geometry
 - Intersection
 - Spline interpolation
 - Polygon
