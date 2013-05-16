@@ -1,6 +1,6 @@
-#fast.js
+# Fidola
 
-[![Build Status](https://travis-ci.org/ikarienator/fast.js.png?branch=master)](https://travis-ci.org/ikarienator/fast.js)
+[![Build Status](https://travis-ci.org/ikarienator/fidola.js.png?branch=master)](https://travis-ci.org/ikarienator/fidola.js)
 
 A simple, tested javascript algorithm library for node.js and browser.
 This project is currently under development.

@@ -391,10 +391,10 @@ process.binding = function (name) {
 
 });
 
-require.define("/fast.js",function(require,module,exports,__dirname,__filename,process,global){/**
- * @namespace fast
+require.define("/fidola.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ * @namespace fidola
  */
-var fast = exports;
+var fidola = exports;
 function includes(module, exp) {
     for (var symbol in exp) {
         module[symbol] = exp[symbol];
@@ -402,9 +402,9 @@ function includes(module, exp) {
 }
 
 /**
- * @namespace fast.seq
+ * @namespace fidola.seq
  */
-var seq = fast.seq = {};
+var seq = fidola.seq = {};
 includes(seq, require("./sequence/BinarySearch"));
 includes(seq, require("./sequence/KMP"));
 includes(seq, require("./sequence/LCS"));
@@ -413,9 +413,9 @@ includes(seq, require("./sequence/LIS"));
 includes(seq, require("./sequence/Shuffle"));
 
 /**
- * @namespace fast.ds
+ * @namespace fidola.ds
  */
-var ds = fast.ds = {};
+var ds = fidola.ds = {};
 includes(ds, require("./datastructure/BinaryHeap.js"));
 includes(ds, require("./datastructure/CartesianTree.js"));
 includes(ds, require("./datastructure/RedBlackTree.js"));
@@ -424,17 +424,17 @@ includes(ds, require("./datastructure/LinkedList.js"));
 includes(ds, require("./datastructure/ImmutableArray.js"));
 
 /**
- * @namespace fast.nt
+ * @namespace fidola.nt
  */
-var nt = fast.nt = {};
+var nt = fidola.nt = {};
 includes(nt, require("./numbertheory/Basics.js"));
 includes(nt, require("./numbertheory/PrimalityTest.js"));
 includes(nt, require("./numbertheory/FNTT.js"));
 
 /**
- * @namespace fast.numeric
+ * @namespace fidola.numeric
  */
-var numeric = fast.numeric = {};
+var numeric = fidola.numeric = {};
 includes(numeric, require("./numeric/FastFourierTransform.js"));
 includes(numeric, require("./numeric/CubicPolynomialSolver.js"));
 });
@@ -1750,8 +1750,8 @@ exports.RedBlackTreeNode = RedBlackTreeNode;
 exports.RedBlackTree = RedBlackTree;
 });
 
-require.define("/datastructure/BinarySearchTree.js",function(require,module,exports,__dirname,__filename,process,global){var fast = require('../fast'),
-    RedBlackTree = fast.ds.RedBlackTree,
+require.define("/datastructure/BinarySearchTree.js",function(require,module,exports,__dirname,__filename,process,global){var fidola = require('../fidola'),
+    RedBlackTree = fidola.ds.RedBlackTree,
     RedBlackTreeNode = RedBlackTree.NODE_TYPE;
 
 /**
@@ -2110,6 +2110,13 @@ ImmutableArray.prototype = {
         return this.foldRight(array, concatFoldRight_);
     },
 
+    /**
+     * Get the nth element in the list.
+     * This is a slow operation.
+     *
+     * @param n Index of the element.
+     * @returns {*}
+     */
     get: function (n) {
         if (n == 0) {
             return this.head();
@@ -2121,6 +2128,7 @@ ImmutableArray.prototype = {
     },
     /**
      * Returns func(...func(func(z, get(0)), get(1)), get(2))... get(n))...).
+     *
      * @param {*} z
      * @param {Function} func
      * @returns {*}
@@ -2136,6 +2144,7 @@ ImmutableArray.prototype = {
 
     /**
      * Returns: func(get(0), func(get(1), func(get(2), ... get(n), z))...).
+     *
      * @param {*} z
      * @param {Function} func
      */
@@ -2153,9 +2162,9 @@ ImmutableArray.prototype = {
     },
 
     /**
-     *
-     * @param func
-     * @returns {*}
+     * Apply <code>func</code> to all the elements and create an immutable array with the result.
+     * @param {Function} func
+     * @returns {ImmutableArray}
      */
     map: function (func) {
         return this.foldRight(null, function (el, res) {
@@ -2164,9 +2173,9 @@ ImmutableArray.prototype = {
     },
 
     /**
-     *
-     * @param func
-     * @returns {*}
+     * Create an immutable array only with elements that func(el) is true.
+     * @param {Function} func
+     * @returns {ImmutableArray}
      */
     filter: function (func) {
         return this.foldRight(null, function (el, res) {
@@ -2179,39 +2188,13 @@ ImmutableArray.prototype = {
     },
 
     /**
-     *
-     * @returns {*}
+     * Create an array of the elements in immutable array.
+     * @returns {Array}
      */
-    reverse: function () {
-        return this.foldLeft(null, function (res, el) {
-            return new ImmutableArray(el, res);
-        });
-    },
-
-    /**
-     *
-     *
-     * @param func
-     * @returns {*}
-     */
-    reverseMap: function (func) {
-        return this.foldLeft(null, function (res, el) {
-            return new ImmutableArray(func(el), res);
-        });
-    },
-
-    /**
-     *
-     * @param func
-     * @returns {*}
-     */
-    reverseFilter: function (func) {
-        return this.foldLeft(null, function (res, el) {
-            if (func(el)) {
-                return new ImmutableArray(el, res);
-            } else {
-                return res;
-            }
+    toArray: function () {
+        return this.foldLeft([], function (res, el) {
+            res.push(el);
+            return res;
         });
     }
 };
@@ -2223,7 +2206,7 @@ exports.ImmutableArray = ImmutableArray;
 
 require.define("/numbertheory/Basics.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Greatest common divisor of two integers
- * @name fast.nt.gcd
+ * @name fidola.nt.gcd
  * @param {Number} a
  * @param {Number} b
  * @returns {Number}
@@ -2280,7 +2263,7 @@ function gcd(a, b) {
 
 /**
  * Returns a * b % n concerning interger overflow.
- * @name fast.nt.multMod
+ * @name fidola.nt.multMod
  * @param {Number} a
  * @param {Number} b
  * @param {Number} n
@@ -2312,7 +2295,7 @@ function multMod(a, b, n) {
 /**
  * Returns pow(a,b) % n with exponentiation by squaring
  * algorithm.
- * @name fast.nt.powerMod
+ * @name fidola.nt.powerMod
  * @param {Number} a
  * @param {Number} b
  * @param {Number} n
@@ -2347,7 +2330,7 @@ exports.powerMod = powerMod;
 exports.multMod = multMod;
 });
 
-require.define("/numbertheory/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){var fast = require('../fast');
+require.define("/numbertheory/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){var fidola = require('../fidola');
 /**
  * Miller-Rabin Primality Test with base a, odd index d and modular n,
  * and n = 2^s * d.
@@ -2358,7 +2341,7 @@ require.define("/numbertheory/PrimalityTest.js",function(require,module,exports,
  * @returns {boolean}
  */
 function millerRabinPrimalityTest(a, s, d, n) {
-    var c = fast.nt.powerMod(a, d, n);
+    var c = fidola.nt.powerMod(a, d, n);
     if (c === 1) {
         return true;
     }
@@ -2366,7 +2349,7 @@ function millerRabinPrimalityTest(a, s, d, n) {
         if (c === n - 1) {
             return true;
         }
-        c = fast.nt.multMod(c, c, n);
+        c = fidola.nt.multMod(c, c, n);
     }
     return false;
 }
@@ -2416,7 +2399,7 @@ function primeQ(small_number) {
         preparePrimes();
     }
     if (small_number < 1048576) {
-        return fast.seq.binarySearch(SMALL_PRIMES, small_number) !== -1;
+        return fidola.seq.binarySearch(SMALL_PRIMES, small_number) !== -1;
     }
     if ((small_number & 1) == 0) {
         return false;
@@ -2845,7 +2828,7 @@ exports.quadraticFunction = quadraticFunction;
 exports.cubicFunction = cubicFunction;
 });
 
-require.define("/browser.js",function(require,module,exports,__dirname,__filename,process,global){global.fast = require("./fast.js");
+require.define("/browser.js",function(require,module,exports,__dirname,__filename,process,global){global.fidola = require("./fidola.js");
 });
 require("/browser.js");
 })();

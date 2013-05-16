@@ -2,12 +2,12 @@ describe("Data Structure", function () {
     describe("Immutable Array", function () {
         var data = [1, 3, 2, 4, 5, 7, 6, 8];
         it("Initialize", function () {
-            expect(fast.ds.ImmutableArray).not.to.be(undefined);
-            var ll = new fast.ds.ImmutableArray(1);
+            expect(fidola.ds.ImmutableArray).not.to.be(undefined);
+            var ll = new fidola.ds.ImmutableArray(1);
             expect(ll.head()).to.be(1);
             expect(ll.tail()).to.be(null);
             expect(ll.length()).to.be(1);
-            ll = new fast.ds.ImmutableArray(3, ll);
+            ll = new fidola.ds.ImmutableArray(3, ll);
             expect(ll.head()).to.be(3);
             expect(ll.tail()).not.to.be(null);
             expect(ll.length()).to.be(2);
@@ -15,7 +15,7 @@ describe("Data Structure", function () {
         function toIA(data) {
             var arr = null;
             for (var i = data.length - 1; i >= 0; i--) {
-                arr = new fast.ds.ImmutableArray(data[i], arr);
+                arr = new fidola.ds.ImmutableArray(data[i], arr);
             }
             return arr;
         }

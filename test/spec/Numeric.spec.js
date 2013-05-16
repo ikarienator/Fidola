@@ -23,8 +23,8 @@
  */
 
 describe("Digital Signal Processing", function () {
-    var fft = fast.numeric.fft,
-        ifft = fast.numeric.ifft;
+    var fft = fidola.numeric.fft,
+        ifft = fidola.numeric.ifft;
 
     function num_test_arr(a, b) {
         var i, len = a.length, diff = [], exp = [];
@@ -82,9 +82,9 @@ describe("Digital Signal Processing", function () {
     });
 
     describe("Solvers", function () {
-        var linearFunction = fast.numeric.linearFunction;
-        var quadraticFunction = fast.numeric.quadraticFunction;
-        var cubicFunction = fast.numeric.cubicFunction;
+        var linearFunction = fidola.numeric.linearFunction;
+        var quadraticFunction = fidola.numeric.quadraticFunction;
+        var cubicFunction = fidola.numeric.cubicFunction;
         it("Linear equation", function () {
             var solver = cubicFunction(0, 0, -15, -4);
             expect(solver(-1 / 3)).to.eql(1);
