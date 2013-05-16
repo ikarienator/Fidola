@@ -6,7 +6,7 @@
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/expect.js/expect.js"></script>
     <script>mocha.setup('bdd')</script>
-    <script src="../fast.js"></script>
+    <script src="../fidola.js"></script>
     <script src="spec/Sequence.spec.js"></script>
     <script src="spec/datastructure/BinaryHeap.spec.js"></script>
     <script src="spec/datastructure/BinarySearchTree.spec.js"></script>
@@ -25,12 +25,12 @@
     <script>
         onload = function(){
             var runner = mocha.run();
-            runner.globals(['fast']);
+            runner.globals(['fidola']);
         };
     </script>
 </head>
 <body>
-<h1>Unit tests of fast.js</h1>
+<h1>Unit tests of fidola.js</h1>
 <div id="mocha"></div>
 </body>
 </html>

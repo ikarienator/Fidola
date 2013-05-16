@@ -2,19 +2,19 @@ NODE_PATH ?= ./node_modules
 JS_MINIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs
 JS_BEAUTIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs -b -i 2 -nm -ns
 
-all: fast.js fast.min.js
+all: fidola.js fidola.min.js
 
-fast.js: Makefile\
+fidola.js: Makefile\
 	lib/*/*.js \
 	lib/*.js
 	@rm -f $@
-	@echo Building fast.js ...
-	browserify lib/browser.js -o fast.js
+	@echo Building fidola.js ...
+	browserify lib/browser.js -o fidola.js
 
-fast.min.js: fast.js
+fidola.min.js: fidola.js
 	@rm -f $@
-	@echo Building fast.min.js ...
-	@$(JS_MINIFIER) fast.js > fast.min.js
+	@echo Building fidola.min.js ...
+	@$(JS_MINIFIER) fidola.js > fidola.min.js
 
 .PHONY: test cover
 
@@ -23,7 +23,7 @@ test: all
 
 cover: all
 	@npm run-script coverage
-	@echo "\n\nOpen <fast-root>/coverage/lcov-report/index.html"
+	@echo "\n\nOpen <fidola-root>/coverage/lcov-report/index.html"
 
 clean:
-	@rm -f fast.js fast.min.js
+	@rm -f fidola.js fidola.min.js

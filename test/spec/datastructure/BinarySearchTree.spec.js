@@ -12,7 +12,7 @@ describe("Data Structure", function () {
         for (var i = 0; i < 80; i++) {
             data.push(i);
         }
-        fast.seq.shuffle(data, random);
+        fidola.seq.shuffle(data, random);
         var sorted = data.slice(0).sort(function (a, b) {
             return a - b;
         });
@@ -103,12 +103,12 @@ describe("Data Structure", function () {
         }
 
         it("Initialize", function () {
-            new fast.ds.RedBlackTree();
-            new fast.ds.BinarySearchTree();
+            new fidola.ds.RedBlackTree();
+            new fidola.ds.BinarySearchTree();
         });
 
         it("Insert", function () {
-            var bst = new fast.ds.BinarySearchTree(), node;
+            var bst = new fidola.ds.BinarySearchTree(), node;
             for (var i = 0; i < data.length; i++) {
                 checkTopo(bst);
                 node = bst.insert(data[i]);
@@ -123,7 +123,7 @@ describe("Data Structure", function () {
         });
 
         it("Search", function () {
-            var bst = new fast.ds.BinarySearchTree();
+            var bst = new fidola.ds.BinarySearchTree();
             for (var i = 0; i < data.length; i++) {
                 bst.insert(data[i]);
             }
@@ -147,7 +147,7 @@ describe("Data Structure", function () {
         });
 
         it("Iterate", function () {
-            var bst = new fast.ds.BinarySearchTree(), i, curr;
+            var bst = new fidola.ds.BinarySearchTree(), i, curr;
 
             i = 0;
             bst.iterate(function (item, node) {
@@ -193,7 +193,7 @@ describe("Data Structure", function () {
         });
 
         it("Inverted less test", function () {
-            var bst = new fast.ds.BinarySearchTree(function (a, b) {
+            var bst = new fidola.ds.BinarySearchTree(function (a, b) {
                 return a > b;
             }), i, curr;
             for (var i = 0; i < data.length; i++) {
@@ -229,7 +229,7 @@ describe("Data Structure", function () {
         });
 
         it("Inexact search", function () {
-            var bst = new fast.ds.BinarySearchTree();
+            var bst = new fidola.ds.BinarySearchTree();
             var node;
             for (var i = 0; i < data.length; i++) {
                 bst.insert(data[i]);
@@ -260,7 +260,7 @@ describe("Data Structure", function () {
         });
 
         it("Remove", function () {
-            var bst = new fast.ds.BinarySearchTree(),
+            var bst = new fidola.ds.BinarySearchTree(),
                 index = [];
             bst.remove(data[0]);
             for (var i = 0; i < data.length; i++) {
@@ -269,7 +269,7 @@ describe("Data Structure", function () {
                 checkTopo(bst);
             }
 
-            fast.seq.shuffle(index);
+            fidola.seq.shuffle(index);
 
             for (i = 0; i < data.length / 2; i++) {
                 bst.remove(data[index[i]]);
@@ -283,7 +283,7 @@ describe("Data Structure", function () {
         });
 
         it("Balance", function () {
-            var bst = new fast.ds.BinarySearchTree(),
+            var bst = new fidola.ds.BinarySearchTree(),
                 n = Math.min(data.length, 30);
             for (var i = 0; i < data.length; i++) {
                 bst.insert(data[i]);

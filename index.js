@@ -1,1 +1,1 @@
-exports = require('./lib/fast.js');
+exports = require('./lib/fidola.js');
