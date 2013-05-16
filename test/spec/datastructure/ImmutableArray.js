@@ -93,5 +93,10 @@ describe("Data Structure", function () {
 
             testEq(ll.filter(filter), data.filter(filter));
         });
+
+        it("ToArray", function () {
+            var ll = toIA(data);
+            expect(ll.toArray()).to.eql(data);
+        });
     });
 });

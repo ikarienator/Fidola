@@ -391,12 +391,19 @@ process.binding = function (name) {
 
 });
 
-require.define("/fast.js",function(require,module,exports,__dirname,__filename,process,global){var fast = exports;
+require.define("/fast.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ * @namespace fast
+ */
+var fast = exports;
 function includes(module, exp) {
     for (var symbol in exp) {
         module[symbol] = exp[symbol];
     }
 }
+
+/**
+ * @namespace fast.seq
+ */
 var seq = fast.seq = {};
 includes(seq, require("./sequence/BinarySearch"));
 includes(seq, require("./sequence/KMP"));
@@ -405,6 +412,9 @@ includes(seq, require("./sequence/LCStr"));
 includes(seq, require("./sequence/LIS"));
 includes(seq, require("./sequence/Shuffle"));
 
+/**
+ * @namespace fast.ds
+ */
 var ds = fast.ds = {};
 includes(ds, require("./datastructure/BinaryHeap.js"));
 includes(ds, require("./datastructure/CartesianTree.js"));
@@ -413,11 +423,17 @@ includes(ds, require("./datastructure/BinarySearchTree.js"));
 includes(ds, require("./datastructure/LinkedList.js"));
 includes(ds, require("./datastructure/ImmutableArray.js"));
 
+/**
+ * @namespace fast.nt
+ */
 var nt = fast.nt = {};
 includes(nt, require("./numbertheory/Basics.js"));
 includes(nt, require("./numbertheory/PrimalityTest.js"));
 includes(nt, require("./numbertheory/FNTT.js"));
 
+/**
+ * @namespace fast.numeric
+ */
 var numeric = fast.numeric = {};
 includes(numeric, require("./numeric/FastFourierTransform.js"));
 includes(numeric, require("./numeric/CubicPolynomialSolver.js"));
@@ -593,7 +609,7 @@ function longestCommonSubsequenceDP(a, b, eqTest) {
     }
 
     var i, ln = b.length, j, ln2 = a.length, ln3 = 0,
-        heads = [], ln3, k, l, target = [], lastElement,
+        heads = [], ln3, k, l, target = [],
         currB;
     for (i = 0; i < ln; i += 1) {
         currB = b[i];
@@ -821,7 +837,24 @@ function shuffle(array, rng) {
 exports.shuffle = shuffle;
 });
 
-require.define("/datastructure/BinaryHeap.js",function(require,module,exports,__dirname,__filename,process,global){function BinaryHeap(values, orderTest) {
+require.define("/datastructure/BinaryHeap.js",function(require,module,exports,__dirname,__filename,process,global){/**
+ * This class provides a classic binary heap implementation.
+ *
+ * A binary heap is a complete binary tree that each node contains a value that is not greater than
+ * that of its parent node, if present.
+ *
+ * - Binary heap can be constructed in O(N) time, in the sense that N is the number of elements.
+ * - You can insert/delete a value to the binary heap in O(log(N)) time.
+ * - You can query the minimum value of the binary heap in O(1) time.
+ * - Binary heap requires O(N) space complexity.
+ *
+ * More about binary heap, see: http://en.wikipedia.org/wiki/Binary_heap
+ *
+ * @param {Array} values List of values to be used on O(n) initialization of the heap.
+ * @param {Function?} orderTest The custom order test. Similar to C++'s operator < .
+ * @constructor
+ */
+function BinaryHeap(values, orderTest) {
     if (typeof orderTest === 'undefined') {
         orderTest = function (a, b) {
             return a < b;
@@ -841,6 +874,12 @@ require.define("/datastructure/BinaryHeap.js",function(require,module,exports,__
 }
 
 var binaryHeap_prototype = BinaryHeap.prototype;
+
+/**
+ * Pull element up to the right place.
+ * @param {Number} k Index of the number.
+ * @private
+ */
 binaryHeap_prototype._up = function (k) {
     var arr = this._arr,
         value = arr[k],
@@ -859,8 +898,8 @@ binaryHeap_prototype._up = function (k) {
 };
 
 /**
- *
- * @param {Number} k
+ * Push element down to the right place.
+ * @param {Number} k Index of the number.
  * @private
  */
 binaryHeap_prototype._down = function (k) {
@@ -902,6 +941,10 @@ binaryHeap_prototype._down = function (k) {
     arr[k] = value;
 };
 
+/**
+ * Insert element into binary heap.
+ * @param {*} el
+ */
 binaryHeap_prototype.push = function (el) {
     var arr = this._arr;
     if (arguments.length > 1) {
@@ -917,10 +960,18 @@ binaryHeap_prototype.push = function (el) {
     }
 };
 
+/**
+ * Query the minimum element of the binary heap.
+ * @returns {*} The minimum element of the binary heap.
+ */
 binaryHeap_prototype.peek = function () {
     return this._arr[0];
 };
 
+/**
+ * Query the minimum element of the binary heap and remove it.
+ * @returns {*} The minimum element of the binary heap.
+ */
 binaryHeap_prototype.pop = function () {
     var arr = this._arr,
         value = arr[0];
@@ -934,6 +985,11 @@ binaryHeap_prototype.pop = function () {
     return value;
 };
 
+/**
+ * Remove an element from binary heap.
+ * @param data
+ * @returns {boolean} Indicates whether this operation succeeded or not.
+ */
 binaryHeap_prototype.remove = function (data) {
     var arr = this._arr,
         i = -1, ln = arr.length - 1;
@@ -955,6 +1011,10 @@ binaryHeap_prototype.remove = function (data) {
     return false;
 };
 
+/**
+ * Get the size of the binary heap.
+ * @returns {Number}
+ */
 binaryHeap_prototype.size = function () {
     return this._arr.length;
 };
@@ -963,23 +1023,34 @@ exports.BinaryHeap = BinaryHeap;
 });
 
 require.define("/datastructure/CartesianTree.js",function(require,module,exports,__dirname,__filename,process,global){/**
- * Cartesian tree is a binary tree generated from a sequence of objects
+ * Cartesian tree is a valued binary tree generated from a sequence of objects
  * with there properties:
- * * It's a heap.
+ * * It's a heap. i.e. value on parent node , if present, is not greater than its children's.
  * * Its in-order traversal recovers the original sequence.
  *
- * @param values
- * @param orderTest
+ * - Values in BST must be defined with an order; you can define customized order using "less test"
+ *   which is similar to C++'s operator < .
+ * - Like other heaps, creating a cartesian tree needs O(N) time where N is the number of elements.
+ * - Searching for the minimum element in given range of indices is an O(log(N)) operation.
+ * - You can add element to the end of the heap. This operation is O(N) worse case time and O(1) amortized time.
+ * - Given two nodes in the tree, the minimum element between them in the original sequence is their
+ *   lowest common ancestor.
+ * - Cartesian tree is used in linear RMQ algorithm to convert general data in to ±1 data.
+ *
+ * More about Cartesian Tree, see: http://en.wikipedia.org/wiki/Cartesian_tree
+ *
+ * @param {Array} values The elements to initialize CartesianTree with.
+ * @param {Function?} lessTest
  * @constructor
  */
-function CartesianTree(values, orderTest) {
-    if (typeof orderTest === 'undefined') {
-        orderTest = function (a, b) {
+function CartesianTree(values, lessTest) {
+    if (typeof lessTest === 'undefined') {
+        lessTest = function (a, b) {
             return a < b;
         }
     }
 
-    this.orderTest = orderTest;
+    this.lessTest = lessTest;
     this.array = [];
     this.parent = [];
     this.left = [];
@@ -1001,8 +1072,12 @@ function CartesianTree(values, orderTest) {
 
 var cartesianTree_prototype = CartesianTree.prototype;
 
+/**
+ * Insert value to the end of the tree.
+ * @param {*} value
+ */
 cartesianTree_prototype.push = function (value) {
-    var orderTest = this.orderTest;
+    var orderTest = this.lessTest;
     var len = this.array.length;
     if (len == 0) {
         this.array.push(value);
@@ -1062,6 +1137,10 @@ cartesianTree_prototype._rangeMinimum = function (root, from, to) {
     }
 };
 
+/**
+ * Get the size of the tree.
+ * @returns {Number}
+ */
 cartesianTree_prototype.size = function () {
     return this.array.length;
 };
@@ -1075,9 +1154,9 @@ require.define("/datastructure/RedBlackTree.js",function(require,module,exports,
  * @property {*} data
  * @param {*} data
  */
-function RedBlackTreeNode(data) {
+RedBlackTreeNode = function (data) {
     this.data = data;
-}
+};
 
 RedBlackTreeNode.prototype = {
     /**
@@ -1674,7 +1753,21 @@ exports.RedBlackTree = RedBlackTree;
 require.define("/datastructure/BinarySearchTree.js",function(require,module,exports,__dirname,__filename,process,global){var fast = require('../fast'),
     RedBlackTree = fast.ds.RedBlackTree,
     RedBlackTreeNode = RedBlackTree.NODE_TYPE;
+
 /**
+ * A compare based binary search tree (BST) data structure built on red black tree.
+ *
+ * - A BST is an ordered container. Values in BST must be defined with an order; you can define
+ *   customized order using "less test" which is similar to C++'s operator < .
+ *   Note: The elements must form a [strict partial order set](http://en.wikipedia.org/wiki/Partially_ordered_set#Strict_and_non-strict_partial_orders).
+ * - You can insert/delete element in O(log(N)) time, in the sense that N is the number
+ *   of elements in the BST.
+ * - You can search the bound node of a given element in O(log(N)) time.
+ * - You can find the maximum/minimum element less/greater than a given value in O(log(N)) time.
+ * - BST requires O(N) space complexity. But the overhead is rather high. Consider
+ *   using sorted array if performance is not an issue.
+ *
+ * More about BST, see: http://en.wikipedia.org/wiki/Binary_search_tree
  * @class
  * @extends RedBlackTree
  * @param {Function} lessTest
@@ -1689,7 +1782,8 @@ var BinarySearchTree = function (lessTest) {
 var BinarySearchTree_prototype = BinarySearchTree.prototype = new RedBlackTree();
 
 /**
- *
+ * Default less test of BST.
+ * Less test defines the order of values
  * @param a
  * @param b
  * @returns {boolean}
@@ -1699,27 +1793,31 @@ BinarySearchTree_prototype.lessTest = function (a, b) {
 };
 
 /**
+ * Find value in tree and returns bound node.
  *
- * @param data
- * @returns {RedBlackTreeNode}
+ * @param {*} data Value to search against.
+ * @returns {RedBlackTreeNode} Bound node of data, or null if search failed.
  */
 BinarySearchTree_prototype.search = function (data) {
     return this._nodeSearch(this.root, data);
 };
 
 /**
+ * Find node with maximum value strictly below <code>data</code>.
  *
- * @param data
- * @returns {RedBlackTreeNode}
+ * @param {*} data Value to search against.
+ * @returns {RedBlackTreeNode} Bound node of maximum value below <code>data</code>.,
+ * or null if there is no value in the tree less than <code>data</code>..
  */
 BinarySearchTree_prototype.searchMaxSmallerThan = function (data) {
     return this._nodeSearchMaxSmallerThan(this.root, data);
 };
 
 /**
- *
- * @param data
- * @returns {RedBlackTreeNode}
+ * Find node with minimum value strictly above <code>data</code>.
+ * @param {*} data Value to search against.
+ * @returns {RedBlackTreeNode} Bound node of minimum value above <code>data</code>.,
+ * or null if there is no value in the tree greater than <code>data</code>..
  */
 BinarySearchTree_prototype.searchMinGreaterThan = function (data) {
     return this._nodeSearchMinGreaterThan(this.root, data);
@@ -1787,8 +1885,8 @@ BinarySearchTree_prototype._nodeSearchMinGreaterThan = function (node, data) {
 };
 
 /**
- *
- * @param data
+ * Insert data into BST.
+ * @param {*} data Value to insert.
  * @return {RedBlackTreeNode}
  */
 BinarySearchTree_prototype.insert = function (data) {
@@ -1806,8 +1904,8 @@ BinarySearchTree_prototype.insert = function (data) {
 /**
  *
  * @param {RedBlackTreeNode} node
- * @param data
- * @param lessTest
+ * @param {*} data
+ * @param {Function} lessTest
  * @returns {RedBlackTreeNode}
  * @private
  */
@@ -1828,8 +1926,8 @@ BinarySearchTree_prototype._nodeInsert = function (node, data, lessTest) {
 };
 
 /**
- *
- * @param data
+ * Remove element from BST if it exists.
+ * @param {*} data
  */
 BinarySearchTree_prototype.remove = function (data) {
     if (this.length) {
@@ -1995,6 +2093,10 @@ function concatFoldRight_(el, arr) {
 }
 
 ImmutableArray.prototype = {
+    /**
+     * Create a clone of the immutable array.
+     * @returns {*}
+     */
     clone: function () {
         return this.foldRight(null, concatFoldRight_);
     },
@@ -2018,9 +2120,9 @@ ImmutableArray.prototype = {
         }
     },
     /**
-     * Returns func(...func(func(init, get(0)), get(1)), get(2))... get(n))...).
+     * Returns func(...func(func(z, get(0)), get(1)), get(2))... get(n))...).
      * @param {*} z
-     * @param {function(res:*, el:*):*} func
+     * @param {Function} func
      * @returns {*}
      */
     foldLeft: function (z, func) {
@@ -2033,9 +2135,9 @@ ImmutableArray.prototype = {
     },
 
     /**
-     * Returns: func(get(0), func(get(1), func(get(2), ... get(n), init))...).
+     * Returns: func(get(0), func(get(1), func(get(2), ... get(n), z))...).
      * @param {*} z
-     * @param {function(el:*, res:*):*} func
+     * @param {Function} func
      */
     foldRight: function (z, func) {
         var stack = [], arr = this;
@@ -2050,15 +2152,61 @@ ImmutableArray.prototype = {
         return z;
     },
 
+    /**
+     *
+     * @param func
+     * @returns {*}
+     */
     map: function (func) {
         return this.foldRight(null, function (el, res) {
             return new ImmutableArray(func(el), res);
         });
     },
 
-
+    /**
+     *
+     * @param func
+     * @returns {*}
+     */
     filter: function (func) {
         return this.foldRight(null, function (el, res) {
+            if (func(el)) {
+                return new ImmutableArray(el, res);
+            } else {
+                return res;
+            }
+        });
+    },
+
+    /**
+     *
+     * @returns {*}
+     */
+    reverse: function () {
+        return this.foldLeft(null, function (res, el) {
+            return new ImmutableArray(el, res);
+        });
+    },
+
+    /**
+     *
+     *
+     * @param func
+     * @returns {*}
+     */
+    reverseMap: function (func) {
+        return this.foldLeft(null, function (res, el) {
+            return new ImmutableArray(func(el), res);
+        });
+    },
+
+    /**
+     *
+     * @param func
+     * @returns {*}
+     */
+    reverseFilter: function (func) {
+        return this.foldLeft(null, function (res, el) {
             if (func(el)) {
                 return new ImmutableArray(el, res);
             } else {
@@ -2075,6 +2223,7 @@ exports.ImmutableArray = ImmutableArray;
 
 require.define("/numbertheory/Basics.js",function(require,module,exports,__dirname,__filename,process,global){/**
  * Greatest common divisor of two integers
+ * @name fast.nt.gcd
  * @param {Number} a
  * @param {Number} b
  * @returns {Number}
@@ -2082,8 +2231,6 @@ require.define("/numbertheory/Basics.js",function(require,module,exports,__dirna
 function gcd(a, b) {
     var temp, d;
     // Stein's algorithm
-    a |= 0;
-    b |= 0;
     if (a < 0) {
         a = -a;
     }
@@ -2133,6 +2280,7 @@ function gcd(a, b) {
 
 /**
  * Returns a * b % n concerning interger overflow.
+ * @name fast.nt.multMod
  * @param {Number} a
  * @param {Number} b
  * @param {Number} n
@@ -2164,10 +2312,11 @@ function multMod(a, b, n) {
 /**
  * Returns pow(a,b) % n with exponentiation by squaring
  * algorithm.
- * @param a
- * @param b
- * @param n
- * @returns {number}
+ * @name fast.nt.powerMod
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} n
+ * @returns {Number}
  */
 function powerMod(a, b, n) {
     // Optimization for compiler.
@@ -2395,19 +2544,18 @@ exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
 });
 
 require.define("/numeric/FastFourierTransform.js",function(require,module,exports,__dirname,__filename,process,global){/**
- * Created with JetBrains WebStorm.
- * User: Bei ZHANG
- * Date: 12/28/12
- * Time: 1:51 AM
- * To change this template use File | Settings | File Templates.
+ * A fast fourier transformer to transform/inverse transform
+ * fixed sized complex array.
+ *
+ * This class implements radix-2 Cooley–Tukey FFT algorithm.
+ * @param length
+ * @constructor
  */
-
-
 function FastFourierTransform(length) {
     var n, k, d, i, c, rev;
     n = this.length = length;
-    this.sinTable = FastFourierTransform.sinTable;
-    this.cosTable = FastFourierTransform.cosTable;
+    this.sinTable = {};
+    this.cosTable = {};
     for (d = 1; d < n; d <<= 1) {
         if (!(d in this.sinTable)) {
             this.sinTable[d] = Math.sin(-Math.PI / d);
@@ -2429,17 +2577,25 @@ function FastFourierTransform(length) {
     }
 }
 
-FastFourierTransform.sinTable = {};
-
-FastFourierTransform.cosTable = {};
-
 FastFourierTransform.prototype = {
     _fftcore: function (list) {
         var n = this.length,
             i, m, k, omreal, omimag, oreal, oimag, id1, id2,
             tr, ti, tmpReal,
             sinTable = this.sinTable,
-            cosTable = this.cosTable;
+            cosTable = this.cosTable,
+            rev, reverseTable = this.reverseTable, a;
+        for (i = 0; i < n; i++) {
+            rev = reverseTable[i];
+            if (rev < i) {
+                a = list[i * 2];
+                list[i * 2] = list[rev * 2];
+                list[rev * 2] = a;
+                a = list[i * 2 + 1];
+                list[i * 2 + 1] = list[rev * 2 + 1];
+                list[rev * 2 + 1] = a;
+            }
+        }
         m = 1;
         while (m < n) {
             omreal = cosTable[m];
@@ -2465,55 +2621,39 @@ FastFourierTransform.prototype = {
             m = m << 1;
         }
     },
+
+    /**
+     * Perform fast Fourier transform.
+     * @param {Array} list The number array to be transformed. The element should be presented as a list of
+     * 2 * fft.length numbers. The real and imag part of each complex number are placed together.
+     * @returns {Array}
+     */
     forward: function (list) {
         var n = this.length, i, rev, reverseTable = this.reverseTable, a;
         if (n == 1) {
-            list.push(0);
             return list;
         } else {
-            for (i = 0; i < n; i++) {
-                rev = reverseTable[i];
-                if (rev < i) {
-                    a = list[i];
-                    list[i] = list[rev];
-                    list[rev] = a;
-                }
-            }
-            // Expand to complex
-            list.length = n * 2;
-            for (i = n - 1; i >= 0; i--) {
-                list[i * 2 + 1] = 0;
-                list[i * 2] = list[i];
-            }
             this._fftcore(list);
         }
         return list;
     },
+
+    /**
+     * Perform fast inverse Fourier transform.
+     * @param {Array} list The number array to be transformed. The element should be presented as a list of
+     * 2 * fft.length numbers. The real and imag part of each complex number are placed together.
+     * @returns {Array}
+     */
     backward: function (list) {
         var n = this.length, i, rev, reverseTable = this.reverseTable, a;
         if (n == 1) {
-            list.length = 1;
             return list;
         } else {
-            for (i = 0; i < n; i++) {
-                rev = reverseTable[i];
-                if (rev < i) {
-                    a = list[i * 2];
-                    list[i * 2] = list[rev * 2];
-                    list[rev * 2] = a;
-                    a = list[i * 2 + 1];
-                    list[i * 2 + 1] = list[rev * 2 + 1];
-                    list[rev * 2 + 1] = a;
-                }
-            }
-            for (i = 0; i < n; i++) {
-                list[i * 2 + 1] = -list[i * 2 + 1];
+            for (i = 0; i < this.length; i++) {
+                list[i * 2] = list[i * 2] / n;
+                list[i * 2 + 1] = -list[i * 2 + 1] / n;
             }
             this._fftcore(list);
-            for (i = 0; i < n; i++) {
-                list[i] = list[i << 1] / n;
-            }
-            list.length = n;
             return list;
         }
     }
@@ -2528,10 +2668,10 @@ function fft(list, length) {
     for (i = len; i < expn; i++) {
         list[i] = 0;
     }
-    if (!FastFourierTransform[expn]) {
-        FastFourierTransform[expn] = new FastFourierTransform(expn);
+    if (!FastFourierTransform[expn / 2]) {
+        FastFourierTransform[expn / 2] = new FastFourierTransform(expn / 2);
     }
-    return FastFourierTransform[expn].forward(list);
+    return FastFourierTransform[expn / 2].forward(list);
 }
 
 function ifft(list, length) {

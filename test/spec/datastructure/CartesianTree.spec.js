@@ -14,7 +14,7 @@ describe("Data Structure", function () {
 
         it("Heapish", function () {
             function checkTopo(ct, data) {
-                var orderTest = ct.orderTest;
+                var orderTest = ct.lessTest;
                 for (var i = 0; i < ct.array.length; i++) {
                     if (ct.array[i] != data[i]) {
                         expect(ct.array[i]).to.eql(data[i]);
