@@ -1,6 +1,6 @@
 # Fidola
 
-[![Build Status](https://travis-ci.org/ikarienator/fidola.js.png?branch=master)](https://travis-ci.org/ikarienator/fidola.js)
+[![Build Status](https://travis-ci.org/ikarienator/Fidola.png?branch=master)](https://travis-ci.org/ikarienator/Fidola)
 
 A simple, tested javascript algorithm library for node.js and browser.
 This project is currently under development.
