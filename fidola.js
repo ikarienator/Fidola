@@ -1,4 +1,24 @@
-(function(){var require = function (file, cwd) {
+/*
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/(function(){var require = function (file, cwd) {
     var resolved = require.resolve(file, cwd || '/');
     var mod = require.modules[resolved];
     if (!mod) throw new Error(
@@ -2526,150 +2546,130 @@ FastNumberTheoreticTransform.prototype.__fnttcore = function (list, rootTable) {
 exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
 });
 
-require.define("/numeric/FastFourierTransform.js",function(require,module,exports,__dirname,__filename,process,global){/**
- * A fast fourier transformer to transform/inverse transform
- * fixed sized complex array.
+require.define("/numeric/FastFourierTransform.js",function(require,module,exports,__dirname,__filename,process,global){var sinTable = [];
+var cosTable = [];
+for (var i = 0; i < 32; i++) {
+    sinTable[i] = Math.sin(-Math.PI / (1 << i));
+    cosTable[i] = Math.cos(Math.PI / (1 << i));
+}
+var reverseTables = {};
+
+/**
+ * Generates auxiliary data for radix-2 fft.
  *
- * This class implements radix-2 Cooley–Tukey FFT algorithm.
  * @param length
- * @constructor
+ * @return {Object} Auxiliary data.
  */
-function FastFourierTransform(length) {
-    var n, k, d, i, c, rev;
-    n = this.length = length;
-    this.sinTable = {};
-    this.cosTable = {};
-    for (d = 1; d < n; d <<= 1) {
-        if (!(d in this.sinTable)) {
-            this.sinTable[d] = Math.sin(-Math.PI / d);
-            this.cosTable[d] = Math.cos(Math.PI / d);
+function _generateReverseTable(length) {
+    var n, k, d, i, c, rev, result = {};
+    n = result.length = length;
+    var table = new Int32Array(length);
+    for (i = 1; i < n; i++) {
+        if (table[i] === 0) {
+            c = n >> 1;
+            k = i;
+            rev = 0;
+            while (c) {
+                rev <<= 1;
+                rev |= k & 1;
+                c >>= 1;
+                k >>= 1;
+            }
+            table[i] = rev;
+            table[rev] = i;
         }
     }
-    this.reverseTable = [];
-    for (i = 0; i < n; i++) {
-        c = n >> 1;
-        k = i;
-        rev = 0;
-        while (c) {
-            rev <<= 1;
-            rev |= k & 1;
-            c >>= 1;
-            k >>= 1;
-        }
-        this.reverseTable[i] = rev;
-    }
+    return table;
 }
 
-FastFourierTransform.prototype = {
-    _fftcore: function (list) {
-        var n = this.length,
-            i, m, k, omreal, omimag, oreal, oimag, id1, id2,
-            tr, ti, tmpReal,
-            sinTable = this.sinTable,
-            cosTable = this.cosTable,
-            rev, reverseTable = this.reverseTable, a;
-        for (i = 0; i < n; i++) {
-            rev = reverseTable[i];
-            if (rev < i) {
-                a = list[i * 2];
-                list[i * 2] = list[rev * 2];
-                list[rev * 2] = a;
-                a = list[i * 2 + 1];
-                list[i * 2 + 1] = list[rev * 2 + 1];
-                list[rev * 2 + 1] = a;
-            }
-        }
-        m = 1;
-        while (m < n) {
-            omreal = cosTable[m];
-            omimag = sinTable[m];
-            oreal = 1;
-            oimag = 0;
-            for (k = 0; k < m; k++) {
-                for (i = k; i < n; i += m << 1) {
-                    id1 = i << 1;
-                    id2 = (i + m) << 1;
-                    tr = (oreal * list[id2]) - (oimag * list[id2 + 1]);
-                    ti = (oreal * list[id2 + 1]) + (oimag * list[id2]);
+/**
+ * Radix-2 Cooley–Tukey FFT algorithm.
+ *
+ * @param {Array} list List of components of complex numbers.
+ * @private
+ */
+function _fftcore(list) {
+    var n = list.length >> 1;
+    if (!reverseTables[n]) {
+        reverseTables[n] = _generateReverseTable(n);
+    }
 
-                    list[id2] = list[id1] - tr;
-                    list[id2 + 1] = list[id1 + 1] - ti;
-                    list[id1] += tr;
-                    list[id1 + 1] += ti;
-                }
-                tmpReal = oreal;
-                oreal = (tmpReal * omreal) - (oimag * omimag);
-                oimag = (tmpReal * omimag) + (oimag * omreal);
-            }
-            m = m << 1;
-        }
-    },
+    var i, m, iteration, k, omreal, omimag, oreal, oimag, id1, id2,
+        tr, ti, tmpReal,
+        rev, a,
+        reverseTable = reverseTables[n];
 
-    /**
-     * Perform fast Fourier transform.
-     * @param {Array} list The number array to be transformed. The element should be presented as a list of
-     * 2 * fft.length numbers. The real and imag part of each complex number are placed together.
-     * @returns {Array}
-     */
-    forward: function (list) {
-        var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-        if (n == 1) {
-            return list;
-        } else {
-            this._fftcore(list);
-        }
-        return list;
-    },
-
-    /**
-     * Perform fast inverse Fourier transform.
-     * @param {Array} list The number array to be transformed. The element should be presented as a list of
-     * 2 * fft.length numbers. The real and imag part of each complex number are placed together.
-     * @returns {Array}
-     */
-    backward: function (list) {
-        var n = this.length, i, rev, reverseTable = this.reverseTable, a;
-        if (n == 1) {
-            return list;
-        } else {
-            for (i = 0; i < this.length; i++) {
-                list[i * 2] = list[i * 2] / n;
-                list[i * 2 + 1] = -list[i * 2 + 1] / n;
-            }
-            this._fftcore(list);
-            return list;
+    for (i = 0; i < n; i++) {
+        rev = reverseTable[i];
+        if (rev < i) {
+            a = list[i * 2];
+            list[i * 2] = list[rev * 2];
+            list[rev * 2] = a;
+            a = list[i * 2 + 1];
+            list[i * 2 + 1] = list[rev * 2 + 1];
+            list[rev * 2 + 1] = a;
         }
     }
-};
+
+    m = 1;
+    iteration = 0;
+    while (m < n) {
+        // Omega step.
+        omreal = cosTable[iteration];
+        omimag = sinTable[iteration];
+        // Original omega.
+        oreal = 1;
+        oimag = 0;
+        // Position in a stripe.
+        for (k = 0; k < m; k++) {
+            for (i = k; i < n; i += m << 1) {
+                id1 = i << 1;
+                id2 = (i + m) << 1;
+                tr = (oreal * list[id2]) - (oimag * list[id2 + 1]);
+                ti = (oreal * list[id2 + 1]) + (oimag * list[id2]);
+                list[id2] = list[id1] - tr;
+                list[id2 + 1] = list[id1 + 1] - ti;
+                list[id1] += tr;
+                list[id1 + 1] += ti;
+            }
+            tmpReal = oreal;
+            oreal = (tmpReal * omreal) - (oimag * omimag);
+            oimag = (tmpReal * omimag) + (oimag * omreal);
+        }
+        m = m << 1;
+        iteration++;
+    }
+}
 
 function fft(list, length) {
     var i,
         len = list.length,
         n = length || len,
-        expn = 1 << Math.ceil(Math.log(n) / Math.log(2));
-    list.length = expn;
-    for (i = len; i < expn; i++) {
+        depth = Math.ceil(Math.log(n) * Math.LOG2E) - 1,
+        expn = 1 << depth;
+    for (i = len; i < expn * 2; i++) {
         list[i] = 0;
     }
-    if (!FastFourierTransform[expn / 2]) {
-        FastFourierTransform[expn / 2] = new FastFourierTransform(expn / 2);
-    }
-    return FastFourierTransform[expn / 2].forward(list);
+    _fftcore(list);
+    return list;
 }
 
 function ifft(list, length) {
     var i,
         len = list.length,
         n = length || len,
-        expn = 1 << Math.ceil(Math.log(n) / Math.log(2));
-    list.length = expn;
-    for (i = len; i < expn; i++) {
+        depth = Math.ceil(Math.log(n) * Math.LOG2E) - 1,
+        expn = 1 << depth;
+    // Congruence of the list divided by the size of the list.
+    for (i = 0; i < len; i += 2) {
+        list[i] = list[i] / expn;
+        list[i + 1] = -list[i + 1] / expn;
+    }
+    for (; i < expn * 2; i++) {
         list[i] = 0;
     }
-    if (!FastFourierTransform[expn / 2]) {
-        FastFourierTransform[expn / 2] = new FastFourierTransform(expn / 2);
-    }
-    return FastFourierTransform[expn / 2].backward(list);
+    _fftcore(list);
+    return list;
 }
 
 exports.fft = fft;
