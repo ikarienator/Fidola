@@ -1,27 +1,3 @@
-/*
- Copyright (C) 2013 Bei Zhang <ikarienator@gmail.com>
-
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
-
- * Redistributions of source code must retain the above copyright
- notice, this list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright
- notice, this list of conditions and the following disclaimer in the
- documentation and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
- DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 describe("Digital Signal Processing", function () {
     var fft = fidola.numeric.fft,
         ifft = fidola.numeric.ifft;
@@ -38,23 +14,26 @@ describe("Digital Signal Processing", function () {
     describe("FFT", function () {
         it("Small fft", function () {
             expect(fft([1, 0])).to.eql([1, 0]);
-            expect(fft([1], 8)).to.eql([1, 0, 1, 0, 1, 0, 1, 0]);
-            var data = [10, 0, 20, 0, 30, 0, 40, 0];
-            expect(fft(data)).to.eql([100, 0, -20, 20, -20, 0, -20, -20]);
+            num_test_arr(fft([1, 0, 2, 0, 3, 0]), [6, 0, -1.5 , 0.8660254037844386 , -1.5 , -0.8660254037844386]);
+            num_test_arr(fft([6, 4, 3, 1, 2, 8, 4, 9, 7, 3]),
+                [22, 25, 1.74617, -3.53742, -0.460582, 6.46625, -0.011554, 5.56819, 6.72597, -13.497]);
 
-            data = [];
+            num_test_arr(fft([10, 0, 20, 0, 30, 0, 40, 0]), [100, 0, -20, 20, -20, 0, -20, -20]);
+
+            var data = [];
             var len = 16;
             for (var i = 0; i < len; i++) {
                 data[i * 2] = Math.cos(i / len * Math.PI * 2);
                 data[i * 2 + 1] = Math.sin(i / len * Math.PI * 2);
             }
-            fft(data);
+            data = fft(data);
             num_test_arr(data, [0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]);
         });
         it("Small ifft", function () {
             expect(ifft([1, 0])).to.eql([1, 0]);
-            expect(ifft([1, 0], 4)).to.eql([0.5, 0, 0.5, 0]);
+            expect(ifft([1, 0, 0, 0])).to.eql([0.5, 0, 0.5, 0]);
+            num_test_arr(ifft([1, 0, 0, 0, 0, 0]), [1 / 3, 0, 1 / 3, 0, 1 / 3, 0]);
             var data = [100, 0, -20, 20, -20, 0, -20, -20];
             num_test_arr(ifft(data), [10, 0, 20, 0, 30, 0, 40, 0]);
             num_test_arr(fft(data), [100, 0, -20, 20, -20, 0, -20, -20]);
@@ -65,7 +44,7 @@ describe("Digital Signal Processing", function () {
                 data[i * 2] = amp * Math.cos(freq * i / len * Math.PI * 2) + amp2 * Math.cos(freq2 * i / len * Math.PI * 2);
                 data[i * 2 + 1] = amp * Math.sin(freq * i / len * Math.PI * 2) + amp2 * Math.sin(freq2 * i / len * Math.PI * 2);
             }
-            fft(data);
+            data = fft(data);
             for (i = 0; i < len; i++) {
                 diff = Math.abs(data[i * 2] - (i == freq ? amp * len : (i == freq2 ? amp2 * len : 0)));
                 if (diff > esp) {

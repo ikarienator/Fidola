@@ -9,7 +9,8 @@ fidola.js: Makefile\
 	lib/*.js
 	@rm -f $@
 	@echo Building fidola.js ...
-	browserify lib/browser.js -o fidola.js
+	@browserify lib/browser.js -o /tmp/fidola.js
+	@cat LICENSE /tmp/fidola.js > fidola.js
 
 fidola.min.js: fidola.js
 	@rm -f $@
