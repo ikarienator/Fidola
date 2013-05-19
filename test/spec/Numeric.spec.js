@@ -38,23 +38,25 @@ describe("Digital Signal Processing", function () {
     describe("FFT", function () {
         it("Small fft", function () {
             expect(fft([1, 0])).to.eql([1, 0]);
-            expect(fft([1], 8)).to.eql([1, 0, 1, 0, 1, 0, 1, 0]);
-            var data = [10, 0, 20, 0, 30, 0, 40, 0];
-            expect(fft(data)).to.eql([100, 0, -20, 20, -20, 0, -20, -20]);
+            num_test_arr(fft([1, 0, 2, 0, 3, 0]), [6, 0, -1.5 , 0.8660254037844386 , -1.5 , -0.8660254037844386]);
+            num_test_arr(fft([6, 4, 3, 1, 2, 8, 4, 9, 7, 3]),
+                [22, 25, 1.74617, -3.53742, -0.460582, 6.46625, -0.011554, 5.56819, 6.72597, -13.497]);
 
-            data = [];
+            num_test_arr(fft([10, 0, 20, 0, 30, 0, 40, 0]), [100, 0, -20, 20, -20, 0, -20, -20]);
+
+            var data = [];
             var len = 16;
             for (var i = 0; i < len; i++) {
                 data[i * 2] = Math.cos(i / len * Math.PI * 2);
                 data[i * 2 + 1] = Math.sin(i / len * Math.PI * 2);
             }
-            fft(data);
+            data = fft(data);
             num_test_arr(data, [0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]);
         });
         it("Small ifft", function () {
             expect(ifft([1, 0])).to.eql([1, 0]);
-            expect(ifft([1, 0], 4)).to.eql([0.5, 0, 0.5, 0]);
+            expect(ifft([1, 0, 0, 0])).to.eql([0.5, 0, 0.5, 0]);
             var data = [100, 0, -20, 20, -20, 0, -20, -20];
             num_test_arr(ifft(data), [10, 0, 20, 0, 30, 0, 40, 0]);
             num_test_arr(fft(data), [100, 0, -20, 20, -20, 0, -20, -20]);
@@ -65,7 +67,7 @@ describe("Digital Signal Processing", function () {
                 data[i * 2] = amp * Math.cos(freq * i / len * Math.PI * 2) + amp2 * Math.cos(freq2 * i / len * Math.PI * 2);
                 data[i * 2 + 1] = amp * Math.sin(freq * i / len * Math.PI * 2) + amp2 * Math.sin(freq2 * i / len * Math.PI * 2);
             }
-            fft(data);
+            data = fft(data);
             for (i = 0; i < len; i++) {
                 diff = Math.abs(data[i * 2] - (i == freq ? amp * len : (i == freq2 ? amp2 * len : 0)));
                 if (diff > esp) {
