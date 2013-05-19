@@ -2682,7 +2682,12 @@ function _conv(list1, list2) {
     list1.length = minn + 1;
 }
 
-function _fftg(list) {
+/**
+ * Bluestein's algorithm to calculate non-radix 2 DFT in O(n log n) time.
+ * @param list
+ * @private
+ */
+function _fft_bluestein(list) {
     var length2 = list.length,
         length = length2 / 2,
         an = [], bn = [], cn = [],
@@ -2708,6 +2713,76 @@ function _fftg(list) {
     }
 }
 
+/**
+ * Perform discrete Fourier transform of list of complex numbers in O(nlogn) time.
+ *
+ * The size of the list is not required to be a power of 2, whereas calculating
+ * such a list is way faster than general case (normally about 4~5x).
+ *
+ * Discrete Fourier Transform & Inverse Discrete Fourier Transform
+ * ===============================================================
+ * Discrete Fourier transform (DFT) convert a list of time domain samples into a list of frequencies domain samples.
+ * Pseudo C++ code to define DFT:
+ *
+ * vector<complex<double> > dft(const vector<complex<double> >& list) {
+ *   vector<complex<double> > result;
+ *   for (int i = 0; i < list.size(); i++) {
+ *     complex<double> amp(0, 0);
+ *     for (int i = 0; i < list.size(); i++) {
+ *       amp +=
+ *           list[i] * exp(complex<double>(0, -2 * M_PI * i * freq / list.size()));
+ *     }
+ *     result.push_back(amp);
+ *   }
+ *   return result;
+ * }
+ *
+ * Perform inverse discrete Fourier transform to recover the original list:
+ * Pseudo C++ code to define IDFT:
+ *
+ * vector<complex<double> > idft(const vector<complex<double> >& list) {
+ *   vector<complex<double> > result;
+ *   for (int i = 0; i < list.size(); i++) {
+ *     complex<double> amp(0, 0);
+ *     for (int i = 0; i < list.size(); i++) {
+ *       amp +=
+ *           list[i] * exp(complex<double>(0, 2 * M_PI * i * freq / list.size()));
+ *     }
+ *     result.push_back(amp/list.size());
+ *   }
+ *   return result;
+ * }
+ *
+ * The core part of DFT and IDFT are pretty similar, in fact we can preprocess a list
+ * and use the dft program to perform idft:
+ *
+ * vector<complex<double> > idft(const vector<complex<double> >& list) {
+ *   for (int i = 0; i < list.size(); i++) {
+ *      list[i] = conj(list[i]) / list.size();
+ *   }
+ *   return dft(list);
+ * }
+ *
+ * With this property we can share most of the code and focus only on DFT.
+ *
+ * fidola.numeric.fft/fidola.numeric.ifft
+ * ======================================
+ *
+ * The algorithm we implemented in Fidola is the combination of Radix-2 Cooley-Tukey fast fourier
+ * transform algorithm for lists of size of a power of 2, which will calculate the DFT in O(nlogn) time;
+ * For other sizes, we use Bluestein's FFT algorithm which convert the problem into a problem of the first
+ * case in O(n) time, then calculate in O(nlogn) time.
+ *
+ * For more about DFT, Cooley-Tukey algorithm and Bluestein's algorithm:
+ *
+ * 1. http://en.wikipedia.org/wiki/Discrete_Fourier_transform
+ * 2. http://en.wikipedia.org/wiki/Fast_Fourier_transform
+ * 3. http://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
+ * 4. http://en.wikipedia.org/wiki/Bluestein's_FFT_algorithm
+ *
+ * @param {Array} list List complex presented as [real0, imag0, real1, imag1 ... real[n-1], imag[n-1]].
+ * @returns {*}
+ */
 function fft(list) {
     var olen = list.length,
         n = olen >> 1,
@@ -2715,11 +2790,19 @@ function fft(list) {
     if (n == (1 << depth)) {
         _fftcore(list);
     } else {
-        _fftg(list);
+        _fft_bluestein(list);
     }
     return list;
 }
 
+/**
+ * Perform inverse discrete Fourier transform of list of complex numbers in O(nlogn) time.
+ *
+ * Refer to {#fft} for more information.
+ *
+ * @param {Array} list List complex presented as [real0, imag0, real1, imag1 ... real[n-1], imag[n-1]].
+ * @returns {*}
+ */
 function ifft(list) {
     var i,
         olen = list.length,
@@ -2732,7 +2815,7 @@ function ifft(list) {
     if (n == (1 << depth)) {
         _fftcore(list);
     } else {
-        _fftg(list);
+        _fft_bluestein(list);
     }
     return list;
 }
