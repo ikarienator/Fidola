@@ -1,6 +1,7 @@
 NODE_PATH ?= ./node_modules
 JS_MINIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs
 JS_BEAUTIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs -b -i 2 -nm -ns
+BROWSERIFY = $(NODE_PATH)/browserify/bin/cmd.js
 
 all: fidola.js fidola.min.js
 
@@ -9,7 +10,7 @@ fidola.js: Makefile\
 	lib/*.js
 	@rm -f $@
 	@echo Building fidola.js ...
-	@browserify lib/browser.js -o /tmp/fidola.js
+	@${BROWSERIFY} --entry lib/browser.js -o /tmp/fidola.js
 	@cat LICENSE /tmp/fidola.js > fidola.js
 
 fidola.min.js: fidola.js
