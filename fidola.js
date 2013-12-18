@@ -504,6 +504,7 @@ function binarySearchWithCompare(sortedArray, needle, compare) {
 
 exports.binarySearch = binarySearch;
 exports.binarySearchWithCompare = binarySearchWithCompare;
+
 });
 
 require.define("/sequence/KMP.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -595,6 +596,7 @@ function KMP(a, b, eqTest, jump) {
 
 exports.KMPPreProcess = KMPPreprocess;
 exports.KMP = KMP;
+
 });
 
 require.define("/sequence/LCS.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -694,6 +696,7 @@ function longestCommonSubsequenceDP(a, b, eqTest) {
 }
 
 exports.LCS = longestCommonSubsequenceDP;
+
 });
 
 require.define("/sequence/LCStr.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -792,6 +795,7 @@ function longestCommonSubstringDP(a, b) {
 
 exports.LCStr = exports.longestCommonSubarrayDP = longestCommonSubarrayDP;
 exports.LCStrStr = exports.longestCommonSubstringDP = longestCommonSubstringDP;
+
 });
 
 require.define("/sequence/LIS.js",function(require,module,exports,__dirname,__filename,process,global){function longestIncreasingSubsequence(array) {
@@ -834,6 +838,7 @@ require.define("/sequence/LIS.js",function(require,module,exports,__dirname,__fi
 }
 
 exports.LIS = exports.longestIncreasingSubsequence = longestIncreasingSubsequence;
+
 });
 
 require.define("/sequence/Shuffle.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -858,6 +863,7 @@ function shuffle(array, rng) {
 }
 
 exports.shuffle = shuffle;
+
 });
 
 require.define("/datastructure/BinaryHeap.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -1043,6 +1049,7 @@ binaryHeap_prototype.size = function () {
 };
 
 exports.BinaryHeap = BinaryHeap;
+
 });
 
 require.define("/datastructure/CartesianTree.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -1169,6 +1176,7 @@ cartesianTree_prototype.size = function () {
 };
 
 exports.CartesianTree = CartesianTree;
+
 });
 
 require.define("/datastructure/RedBlackTree.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -1771,6 +1779,7 @@ RedBlackTree.prototype = {
 
 exports.RedBlackTreeNode = RedBlackTreeNode;
 exports.RedBlackTree = RedBlackTree;
+
 });
 
 require.define("/datastructure/BinarySearchTree.js",function(require,module,exports,__dirname,__filename,process,global){var fidola = require('../fidola'),
@@ -1959,6 +1968,7 @@ BinarySearchTree_prototype.remove = function (data) {
 };
 
 exports.BinarySearchTree = BinarySearchTree;
+
 });
 
 require.define("/datastructure/LinkedList.js",function(require,module,exports,__dirname,__filename,process,global){/**
@@ -2482,6 +2492,7 @@ exports.egcd = egcd;
 exports.multInv = multInv;
 exports.powerMod = powerMod;
 exports.multMod = multMod;
+
 });
 
 require.define("/numbertheory/PrimalityTest.js",function(require,module,exports,__dirname,__filename,process,global){var fidola = require('../fidola');
@@ -2571,6 +2582,7 @@ function primeQ(small_number) {
 
 
 exports.primeQ = primeQ;
+
 });
 
 require.define("/numbertheory/FNTT.js",function(require,module,exports,__dirname,__filename,process,global){var GetBitReverseTable = require('../numeric/FastFourierTransform').GetBitReverseTable;
@@ -2665,6 +2677,7 @@ FastNumberTheoreticTransform.prototype.__fnttcore = function (list, rootTable) {
 };
 
 exports.FastNumberTheoreticTransform = FastNumberTheoreticTransform;
+
 });
 
 require.define("/numeric/FastFourierTransform.js",function(require,module,exports,__dirname,__filename,process,global){var sinTable = [];
@@ -3800,6 +3813,7 @@ MPN_proto._divAssignMod_bi = function (num) {
 };
 
 exports.Unsigned = Unsigned;
+
 });
 
 require.define("/arithmatic/Integer.js",function(require,module,exports,__dirname,__filename,process,global){var Unsigned = require('./Unsigned').Unsigned;
@@ -4062,6 +4076,7 @@ MPZ_proto.toString = function () {
 };
 
 exports.Integer = Integer;
+
 });
 
 require.define("/numeric/CubicPolynomialSolver.js",function(require,module,exports,__dirname,__filename,process,global){var PI2_3 = 2.0943951023931953; // 120 Deg
@@ -4214,6 +4229,7 @@ function cubicFunction(a, b, c, d) {
 exports.linearFunction = linearFunction;
 exports.quadraticFunction = quadraticFunction;
 exports.cubicFunction = cubicFunction;
+
 });
 
 require.define("/browser.js",function(require,module,exports,__dirname,__filename,process,global){global.fidola = require("./fidola.js");
