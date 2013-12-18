@@ -33,6 +33,8 @@ This project is currently under development.
 - Primality Test
 - Fast Number Theoretic Transform
 - Greatest Common Divisor
+- Big Integer Arithmetics
+- Extended GCD
 
 ### Wish List
 
@@ -72,8 +74,6 @@ This project is currently under development.
 
 #### Simple Number Theory Algorithms
 - Small Number Factoring
-- Big Integer Arithmetics
-- Extended GCD
 - Continued Fraction / Diophantine approximation
 - Pell's equation
 - CRT Recovery
