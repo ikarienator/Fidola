@@ -1,6 +1,6 @@
 Fidola
 ======
-_A simple, zero depency, tested, javascript algorithm library for you._
+_A fast, simple, fully tested, javascript algorithm library for you._
 
 
 [![Build Status](https://travis-ci.org/ikarienator/Fidola.png?branch=master)](https://travis-ci.org/ikarienator/Fidola)
